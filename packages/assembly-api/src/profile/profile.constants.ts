@@ -1,0 +1,33 @@
+export const PROFILE_IN_SESSION_SELECT = {
+  id: true,
+  username: true,
+  role: true,
+  rdcStatus: true,
+  screenShare: true,
+  markable: true,
+  createdAt: true,
+  expiredAt: true,
+  streams: {
+    id: true,
+    uid: true,
+    kind: true,
+    audio: true,
+    video: true,
+    createdAt: true,
+    expiredAt: true,
+  },
+  signals: {
+    createdAt: true,
+    expiredAt: true,
+    id: true,
+    kind: true,
+    uid: true,
+  },
+  whiteboard: {
+    createdAt: true,
+    expiredAt: true,
+    id: true,
+    role: true,
+    uuid: true,
+  },
+};

@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "assembly-api.fullname" . }}
+  labels:
+    {{- include "assembly-api.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "assembly-api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "assembly-api.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "assembly-api.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3030
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /api/healthz
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /api/readz
+              port: http
+          env:
+            - name: "DATABASE_HOST"
+              valueFrom:
+                secretKeyRef:
+                  key:  DATABASE_HOST
+                  name: {{ .Release.Name }}-auth
+            - name: "DATABASE_PORT"
+              valueFrom:
+                secretKeyRef:
+                  key:  DATABASE_PORT
+                  name: {{ .Release.Name }}-auth
+            - name: "DATABASE_USERNAME"
+              valueFrom:
+                secretKeyRef:
+                  key:  DATABASE_USERNAME
+                  name: {{ .Release.Name }}-auth
+            - name: "DATABASE_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  key:  DATABASE_PASSWORD
+                  name: {{ .Release.Name }}-auth
+            - name: "DATABASE_NAME"
+              valueFrom:
+                secretKeyRef:
+                  key:  DATABASE_NAME
+                  name: {{ .Release.Name }}-auth
+            - name: "EXPIRED_DURATION"
+              valueFrom:
+                secretKeyRef:
+                  key:  EXPIRED_DURATION
+                  name: {{ .Release.Name }}-auth
+            - name: "AGORA_APP_ID"
+              valueFrom:
+                secretKeyRef:
+                  key:  AGORA_APP_ID
+                  name: {{ .Release.Name }}-auth
+            - name: "AGORA_APP_CERTIFICATE"
+              valueFrom:
+                secretKeyRef:
+                  key:  AGORA_APP_CERTIFICATE
+                  name: {{ .Release.Name }}-auth
+            - name: "NETLESS_SDK_TOKEN"
+              valueFrom:
+                secretKeyRef:
+                  key:  NETLESS_SDK_TOKEN
+                  name: {{ .Release.Name }}-auth
+            - name: "NETLESS_APP_IDENTIFIER"
+              valueFrom:
+                secretKeyRef:
+                  key:  NETLESS_APP_IDENTIFIER
+                  name: {{ .Release.Name }}-auth
+            - name: "NETLESS_SDK_REGION"
+              valueFrom:
+                secretKeyRef:
+                  key:  NETLESS_SDK_REGION
+                  name: {{ .Release.Name }}-auth
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

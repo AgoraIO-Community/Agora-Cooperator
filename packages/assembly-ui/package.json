@@ -1,0 +1,117 @@
+{
+  "name": "assembly-ui",
+  "version": "0.0.1-alpha.0",
+  "homepage": "./",
+  "main": "build/electron/main.js",
+  "private": true,
+  "scripts": {
+    "start": "concurrently \"cross-env BROWSER=none react-app-rewired start\" \"tsc -p electron && cross-env NODE_ENV=development electron .\"",
+    "build": "pnpm clean && cross-env NODE_ENV=production GENERATE_SOURCEMAP=false react-app-rewired build && tsc -p electron && electron-builder",
+    "build:dev": "pnpm clean && cross-env NODE_ENV=development react-app-rewired build && tsc -p electron && electron-builder",
+    "clean": "rimraf ./build ./dist"
+  },
+  "dependencies": {
+    "@netless/fastboard-react": "0.3.2-canary.4",
+    "@netless/window-manager": "^0.4.18",
+    "agora-electron-sdk": "3.6.1-rc.1-build.122",
+    "agora-rdc-electron": "^1.0.0",
+    "agora-rtm-sdk": "^1.4.4",
+    "antd": "^4.19.3",
+    "assembly-shared": "workspace:^0.0.1-alpha.0",
+    "axios": "^0.26.1",
+    "classnames": "^2.3.1",
+    "dayjs": "^1.11.0",
+    "eventemitter3": "^4.0.7",
+    "lodash": "^4.17.21",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-icons": "^4.3.1",
+    "react-intl": "^5.24.7",
+    "react-router-dom": "^6.2.2",
+    "react-use": "^17.3.2",
+    "web-vitals": "^2.1.0",
+    "white-web-sdk": "^2.16.10"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "@types/jest": "^27.0.1",
+    "@types/lodash": "^4.14.181",
+    "@types/node": "^16.7.13",
+    "@types/react": "^17.0.20",
+    "@types/react-dom": "^17.0.9",
+    "concurrently": "^7.0.0",
+    "cross-env": "^7.0.3",
+    "customize-cra": "^1.0.0",
+    "electron": "12.0.0",
+    "electron-builder": "^22.14.13",
+    "react-app-rewired": "^2.2.1",
+    "react-scripts": "5.0.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.4.2",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "agora_electron": {
+    "electron_version": "12.0.0",
+    "prebuilt": true,
+    "arch": "x64"
+  },
+  "build": {
+    "extends": null,
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/agora-rdc-core/**/*",
+      "node_modules/agora-electron-sdk/**/*"
+    ],
+    "afterPack": "./after-pack.js",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "!**/node_modules/**/{CHANGELOG.md,README.md,README,readme.md,README.zh.md}",
+      "!**/node_modules/**/{nodemon.json,rollup.config.js,tsconfig.json,typedoc.json,rc_message.proto}",
+      "!**/node_modules/**/*.{ts,h,cc,cpp,gyp,map,hpp,mm,proto,cmd,tar.gz,a,la,inc,pc,dSYM}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+      "!**/{appveyor.yml,.travis.yml,circle.yml}",
+      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
+    ],
+    "artifactName": "${productName}-v${version}-${os}-${arch}.${ext}",
+    "productName": "Assembly",
+    "appId": "io.agora.assembly",
+    "mac": {
+      "target": "dmg",
+      "entitlements": "entitlements.mac.plist",
+      "hardenedRuntime": true
+    },
+    "win": {
+      "target": "nsis",
+      "requestedExecutionLevel": "requireAdministrator"
+    },
+    "nsis": {
+      "license": "./eula.txt"
+    }
+  }
+}

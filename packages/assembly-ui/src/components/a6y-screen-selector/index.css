@@ -1,0 +1,54 @@
+.a6y-screen-selector .ant-modal-body {
+  min-height: 360px;
+}
+
+.a6y-with-audio {
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #303030;
+}
+
+.a6y-displays {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.a6y-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  margin-right: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #303030;
+  border-radius: 4px;
+}
+.a6y-display.checked {
+  border-color: #00a854;
+}
+
+.a6y-display:hover {
+  border-color: #177ddc;
+}
+
+.a6y-display:nth-child(3n) {
+  margin-right: 0px;
+}
+
+.a6y-display-thumbnail {
+  height: 100px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.a6y-display-thumbnail > img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.a6y-display-name {
+  font-size: 14px;
+  margin-top: 8px;
+}

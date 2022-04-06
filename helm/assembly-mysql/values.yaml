@@ -1,0 +1,15 @@
+primary:
+  persistence:
+    enabled: false
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+      ephemeral-storage: 200Mi
+    requests:
+      cpu: 1000m
+      memory: 512Mi
+      ephemeral-storage: 180Mi
+  livenessProbe:
+    failureThreshold: 30
+    initialDelaySeconds: 300

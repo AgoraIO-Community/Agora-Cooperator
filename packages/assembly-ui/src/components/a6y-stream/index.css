@@ -1,0 +1,77 @@
+.a6y-host {
+  --a6y-gradient-to: #6366f1;
+  --a6y-gradient-from: #a855f7;
+  --a6y-gradient-stops: var(--a6y-gradient-from),
+    var(--a6y-gradient-to, rgba(168, 85, 247, 0));
+}
+
+.a6y-normal {
+  --a6y-gradient-to: #f97316;
+  --a6y-gradient-from: #fcd34d;
+  --a6y-gradient-stops: var(--a6y-gradient-from),
+    var(--a6y-gradient-to, rgba(252, 211, 77, 0));
+}
+
+.a6y-stream {
+  position: relative;
+  width: 200px;
+  height: 111px;
+  margin: 8px 8px 0 8px;
+  background-image: linear-gradient(to right, var(--a6y-gradient-stops));
+  border-radius: 4px;
+}
+
+.a6y-playing {
+  background-image: none;
+}
+
+.a6y-stream > div > canvas {
+  transition: all 0.3s ease-in-out;
+  border-radius: 4px;
+}
+
+.a6y-stream-username {
+  position: absolute;
+  padding: 0 4px;
+  max-width: 100px;
+  top: 2px;
+  left: 2px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  z-index: 9;
+  border-radius: 4px;
+  background-color: rgb(0, 0, 0, 0.4);
+}
+
+.a6y-stream-actions {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  height: 28px;
+  width: 200px;
+  padding: 0 8px;
+  background-color: rgb(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 9;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.a6y-stream-actions .action {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.a6y-stream-actions .action:disabled {
+  cursor: not-allowed;
+}
+

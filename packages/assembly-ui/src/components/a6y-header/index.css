@@ -1,0 +1,64 @@
+.a6y-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+}
+
+.a6y-header-end {
+  display: flex;
+  flex-direction: row;
+}
+
+.a6y-header .a6y-channel {
+  font-size: 14px;
+}
+.a6y-header .a6y-timer {
+  font-size: 12px;
+}
+.a6y-header .a6y-network-quality{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 18px;
+}
+.a6y-network-quality .a6y-upload,
+.a6y-network-quality .a6y-download{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 20px
+}
+
+.a6y-header .a6y-markable {
+  display: none;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.a6y-focus-mode .ant-layout-header {
+  position: fixed;
+  top: 36px;
+  left: calc(50% - 100px);
+  z-index: 99999;
+  width: 100px;
+  height: 26px;
+  border-radius: 4px;
+  padding: 0 8px;
+  z-index: 100;
+}
+.a6y-focus-mode .a6y-header {
+  justify-content: space-between;
+}
+.a6y-focus-mode .a6y-header .a6y-header-end .a6y-network-quality,
+.a6y-focus-mode .a6y-header .a6y-header-start,
+.a6y-focus-mode .a6y-header .a6y-channel {
+  display: none;
+}
+
+.a6y-focus-mode .a6y-header .a6y-markable {
+  display: flex;
+}
