@@ -294,7 +294,7 @@ export const Root = () => {
           </Layout.Content>
           <Layout.Sider
             width={216}
-            style={{ backgroundColor: 'transparent', overflow: 'scroll' }}>
+            style={{ backgroundColor: 'transparent', overflowY: 'auto' }}>
             {profilesInSession.map((profile) => (
               <A6yStream
                 key={profile.id}
