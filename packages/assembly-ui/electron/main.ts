@@ -6,11 +6,15 @@ const toggleFocusMode = (mainWindow: BrowserWindow, enabled: boolean) => {
     const { width, height, x, y } = screen.getPrimaryDisplay().bounds;
     mainWindow.setPosition(x, y);
     mainWindow.setSize(width, height);
-    mainWindow.setTrafficLightPosition({ x: -20, y: -20 });
   } else {
     const { height, width } = screen.getPrimaryDisplay().workAreaSize;
     mainWindow.setSize(width, height);
     mainWindow.center();
+  }
+  if (enabled && process.platform === 'darwin') {
+    mainWindow.setTrafficLightPosition({ x: -20, y: -20 });
+  }
+  if (!enabled && process.platform === 'darwin') {
     mainWindow.setTrafficLightPosition({ x: 0, y: 0 });
   }
   mainWindow.setHasShadow(!enabled);
@@ -54,7 +58,6 @@ const createWindow = async () => {
       enableRemoteModule: true,
       contextIsolation: false,
     },
-    type: 'toolbar',
     transparent: true,
     frame: false,
     enableLargerThanScreen: true,

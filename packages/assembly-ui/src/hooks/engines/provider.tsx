@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { useUnmount } from 'react-use';
 import { EnginesContext } from './context';
 import {
@@ -12,6 +12,7 @@ import { useSession } from '../session';
 import { AgoraRemoteDesktopControl, RDCRoleType } from 'agora-rdc-electron';
 import { uniq } from 'lodash';
 import { ipcRenderer } from 'electron';
+import { useTitlebar } from '../titlebar';
 
 enum ExternalStatus {
   IDLE_FOR_RDC = 0,
@@ -26,6 +27,7 @@ const ROLE_MAPS: { [key in RoleType]: RDCRoleType } = {
 };
 
 export const EnginesProvider: FC = ({ children }) => {
+  const titleBar = useTitlebar();
   const [rtcEngine, setRtcEngine] = useState<RtcEngine>();
   const [rdcEngine, setRdcEngine] = useState<AgoraRemoteDesktopControl>();
   const [networkQuality, setNetworkQuality] = useState<{
@@ -164,6 +166,7 @@ export const EnginesProvider: FC = ({ children }) => {
       rtcEngine.initializeFSSRtcEngine(appId);
       rtcEngine.joinFSSChannel(token, uid, channel);
       rtcEngine.publishFSS(displayId, displayConfig, audio);
+      titleBar.setVisible(false);
       ipcRenderer.invoke('screenShareStarted');
     }
     if (!video && externalStatus === ExternalStatus.OCCUPIED_BY_SCREEN_SHARE) {
@@ -171,6 +174,7 @@ export const EnginesProvider: FC = ({ children }) => {
       rtcEngine.leaveFSSChannel();
       rtcEngine.releaseFSSRtcEngine();
       setExternalStatus(ExternalStatus.IDLE_FOR_RDC);
+      titleBar.setVisible(true);
       ipcRenderer.invoke('screenShareStopped');
     }
   }, [
@@ -238,8 +242,7 @@ export const EnginesProvider: FC = ({ children }) => {
         setDisplayId,
         setDisplayConfig,
         rdcEngine,
-      }}
-    >
+      }}>
       {children}
     </EnginesContext.Provider>
   );

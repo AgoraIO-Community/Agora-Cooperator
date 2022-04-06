@@ -258,11 +258,21 @@ export const Root = () => {
       );
       rdcEngine.off('rdc-quit-control', handleQuitControl);
     };
-  }, [rdcEngine, handleRequestControl, handleRequestUnauthorized, handleQuitControl]);
+  }, [
+    rdcEngine,
+    handleRequestControl,
+    handleRequestUnauthorized,
+    handleQuitControl,
+  ]);
 
   return (
     <>
-      <Layout style={{ height: '100vh', width: '100vw' }}>
+      <Layout
+        style={{
+          height: `calc(100vh - ${process.platform === 'darwin' ? 32 : 28}px)`,
+          width: '100vw',
+          marginTop: process.platform === 'darwin' ? 32 : 28,
+        }}>
         <Layout.Header>
           <A6yHeader />
         </Layout.Header>
@@ -282,7 +292,9 @@ export const Root = () => {
                 ))}
             </Tabs>
           </Layout.Content>
-          <Layout.Sider width={216} style={{ backgroundColor: 'transparent' }}>
+          <Layout.Sider
+            width={216}
+            style={{ backgroundColor: 'transparent', overflow: 'scroll' }}>
             {profilesInSession.map((profile) => (
               <A6yStream
                 key={profile.id}
