@@ -82,7 +82,7 @@ const App = () => {
             maximized={maximized}
             theme={{
               bar: {
-                height: window.process.platform === 'darwin' ? 36 : undefined,
+                height: window.process.platform === 'darwin' ? 36 : 28,
               },
             }}
           />
