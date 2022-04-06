@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useUnmount } from 'react-use';
 import { EnginesContext } from './context';
 import {
@@ -185,6 +185,7 @@ export const EnginesProvider: FC = ({ children }) => {
     displayConfig,
     profile,
     externalStatus,
+    titleBar,
   ]);
 
   // handle RTC engine events
