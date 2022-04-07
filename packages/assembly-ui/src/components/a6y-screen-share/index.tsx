@@ -153,7 +153,7 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
         ref={attachElRef}
         style={{
           height: height === 0 ? '100%' : `${height}px`,
-          width: width === 0 ? '100%' : `${width}px`,
+          // width: width === 0 ? '100%' : `${width}px`,
         }}
       ></div>
       <A6yFastBoard
