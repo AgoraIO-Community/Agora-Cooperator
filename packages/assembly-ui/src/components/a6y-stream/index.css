@@ -30,7 +30,7 @@
   border-radius: 4px;
 }
 .a6y-stream.a6y-mirror > div > canvas {
-  transform: rotate(180deg);
+  transform: rotateY(180deg);
 }
 
 .a6y-stream-username {
