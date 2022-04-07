@@ -7,6 +7,11 @@ import { A6yFastBoard } from '../a6y-fast-board';
 import { RDCRoleType } from 'agora-rdc-electron';
 
 const ASPECT_RATIO = 9 / 16;
+
+const WORK_AREA_HEIGHT_MAPS: {[k: string]: number} = {
+  'darwin': 178,
+  'win32': 170,
+}
 export interface A6yScreenShareProps {
   profileInSession: ProfileInSession;
 }
@@ -30,8 +35,8 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
   );
 
   const updateSize = useCallback(() => {
-    const height = window.innerHeight - 142;
-    const width = window.innerWidth - 240;
+    const height = window.innerHeight - (WORK_AREA_HEIGHT_MAPS[process.platform] ?? 180);
+    const width = window.innerWidth - 280;
     if (height < width * ASPECT_RATIO) {
       setSize([width * ASPECT_RATIO, width]);
     } else {

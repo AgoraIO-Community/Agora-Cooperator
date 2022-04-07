@@ -12,6 +12,19 @@
   margin: 8px;
   position: relative;
 }
+
+.a6y-screen-shares .ant-tabs-bottom > .ant-tabs-nav,
+.ant-tabs-bottom > div > .ant-tabs-nav,
+.ant-tabs-top > .ant-tabs-nav,
+.ant-tabs-top > div > .ant-tabs-nav {
+  margin: 0px !important;
+}
+
+.a6y-screen-share canvas,
+.a6y-screen-share canvas:focus .a6y-screen-share canvas:active {
+  outline: none;
+}
+
 .a6y-screen-share.playing {
   background-image: none;
 }
