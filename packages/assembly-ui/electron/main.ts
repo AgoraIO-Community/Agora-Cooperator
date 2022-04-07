@@ -6,10 +6,6 @@ const toggleFocusMode = (mainWindow: BrowserWindow, enabled: boolean) => {
     const { width, height, x, y } = screen.getPrimaryDisplay().bounds;
     mainWindow.setPosition(x, y);
     mainWindow.setSize(width, height);
-  } else {
-    const { height, width } = screen.getPrimaryDisplay().workAreaSize;
-    mainWindow.setSize(width, height);
-    mainWindow.center();
   }
   if (enabled && process.platform === 'darwin') {
     mainWindow.setTrafficLightPosition({ x: -20, y: -20 });
@@ -29,6 +25,11 @@ const toggleFocusMode = (mainWindow: BrowserWindow, enabled: boolean) => {
   );
   mainWindow.setAlwaysOnTop(enabled, 'screen-saver');
   mainWindow.setVisibleOnAllWorkspaces(enabled);
+  if (!enabled) {
+    const { height, width } = screen.getPrimaryDisplay().workAreaSize;
+    mainWindow.setSize(width, height);
+    mainWindow.center();
+  }
 };
 
 function registerIpcListeners(mainWindow: BrowserWindow) {
@@ -53,8 +54,8 @@ const createWindow = async () => {
   let mainWindow: BrowserWindow | null = null;
   const { height, width } = screen.getPrimaryDisplay().workAreaSize;
   mainWindow = new BrowserWindow({
-    height: process.platform === 'win32' ? 1024 : height,
-    width: process.platform === 'win32' ? 768 : width,
+    height: process.platform === 'win32' ? 768 : height,
+    width: process.platform === 'win32' ? 1024 : width,
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
