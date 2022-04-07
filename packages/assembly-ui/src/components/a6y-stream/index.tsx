@@ -244,7 +244,7 @@ export const A6yStream: FC<StreamProps> = ({
               )}
             </button>
           </Tooltip>
-          {role === RoleType.NORMAL ? (
+          {profile?.role === RoleType.HOST ? (
             <Tooltip
               placement="bottomLeft"
               overlay={
