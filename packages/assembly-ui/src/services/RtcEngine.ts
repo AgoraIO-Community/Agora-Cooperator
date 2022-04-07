@@ -183,7 +183,12 @@ export class RtcEngine extends EventEmitter {
     }
     if (isDisplay) {
       const excludeWindowList = (this.getFSSWindows() as any[])
-        .filter((w) => w.ownerName === 'Electron' || w.ownerName === 'Assembly')
+        .filter(
+          (w) =>
+            w.ownerName === 'Electron' ||
+            w.ownerName === 'Assembly' ||
+            w.name === 'Assembly',
+        )
         .map((w) => w.windowId) as number[];
       const captureParams = {
         excludeWindowCount: 0,
