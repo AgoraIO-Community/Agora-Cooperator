@@ -71,13 +71,15 @@ export const A6yStream: FC<StreamProps> = ({
         audio: !cameraStream.audio,
       },
     });
-    if (!cameraStream.audio) {
-      message.success(
-        intl
-          .formatMessage({ id: 'message.invite.audio.request' })
-          .replace('{username}', username),
-      );
-    }
+    message.success(
+      intl
+        .formatMessage({
+          id: `message.invite.audio.request.${
+            cameraStream.audio ? 'off' : 'on'
+          }`,
+        })
+        .replace('{username}', username),
+    );
   };
 
   const handleCamera = () => {
@@ -99,13 +101,15 @@ export const A6yStream: FC<StreamProps> = ({
         video: !cameraStream.video,
       },
     });
-    if (cameraStream.video) {
-      message.success(
-        intl
-          .formatMessage({ id: 'message.invite.video.request' })
-          .replace('{username}', username),
-      );
-    }
+    message.success(
+      intl
+        .formatMessage({
+          id: `message.invite.video.request.${
+            cameraStream.video ? 'off' : 'on'
+          }`,
+        })
+        .replace('{username}', username),
+    );
   };
 
   const handleScreenShare = async () => {
@@ -203,8 +207,7 @@ export const A6yStream: FC<StreamProps> = ({
         'a6y-playing':
           cameraStream?.video && publishedStreams.includes(cameraStream?.uid),
       })}
-      ref={attachElRef}
-    >
+      ref={attachElRef}>
       <div className="a6y-stream-username">{username}</div>
       {profile?.role === RoleType.HOST || isSelf ? (
         <div className="a6y-stream-actions">
@@ -216,8 +219,7 @@ export const A6yStream: FC<StreamProps> = ({
                 : intl.formatMessage({
                     id: `a6y.stream.audio.on${isSelf ? '' : '.request'}`,
                   })
-            }
-          >
+            }>
             <button className="action" onClick={handleMicrophone}>
               {cameraStream?.audio ? (
                 <BiMicrophone size={20} />
@@ -234,8 +236,7 @@ export const A6yStream: FC<StreamProps> = ({
                 : intl.formatMessage({
                     id: `a6y.stream.video.on${isSelf ? '' : '.request'}`,
                   })
-            }
-          >
+            }>
             <button className="action" onClick={handleCamera}>
               {cameraStream?.video ? (
                 <BiVideo size={20} />
@@ -251,13 +252,11 @@ export const A6yStream: FC<StreamProps> = ({
                 screenStream?.video
                   ? intl.formatMessage({ id: 'a6y.stream.rdc.off' })
                   : intl.formatMessage({ id: 'a6y.stream.rdc.on' })
-              }
-            >
+              }>
               <button
                 className="action"
                 onClick={handleRemoteDesktop}
-                disabled={profile?.screenShare}
-              >
+                disabled={profile?.screenShare}>
                 <ImDisplay size={16} />
               </button>
             </Tooltip>
@@ -270,13 +269,11 @@ export const A6yStream: FC<StreamProps> = ({
                 : intl.formatMessage({
                     id: `a6y.stream.screenShare.on${isSelf ? '' : '.request'}`,
                   })
-            }
-          >
+            }>
             <button
               className="action"
               onClick={handleScreenShare}
-              disabled={rdcStatus !== RDCStatus.IDLE}
-            >
+              disabled={rdcStatus !== RDCStatus.IDLE}>
               {screenStream?.video ? (
                 <MdOutlineScreenShare size={20} />
               ) : (

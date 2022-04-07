@@ -39,11 +39,13 @@ const messages = {
   'modal.request.control.title': '{username} request to control your computer',
   'message.disable.audio.title': 'is disabled your microphone',
   'message.disable.video.title': 'is disabled your camera',
-  'message.disable.screenShare.title': 'is stopped your camera',
-  'message.invite.audio.request':
+  'message.disable.screenShare.title': 'is stopped your screen share',
+  'message.invite.audio.request.on':
+    'You have invited {username} to turn on the microphone.',
+  'message.invite.audio.request.off': `You have turned off {username}'s microphone.`,
+  'message.invite.video.request.on':
     'You have invited {username} to turn on the camera.',
-  'message.invite.video.request':
-    'You have invited {username} to turn on the camera.',
+  'message.invite.video.request.off': `You have turned off {username}'s camera.`,
   'message.invite.screenShare.request':
     'You have invited {username} to start screen share.',
   'message.rdc.unauthorized.title': '{username} is declined your request.',
