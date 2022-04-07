@@ -29,6 +29,9 @@
   transition: all 0.3s ease-in-out;
   border-radius: 4px;
 }
+.a6y-stream.a6y-mirror > div > canvas {
+  transform: rotate(180deg);
+}
 
 .a6y-stream-username {
   position: absolute;
@@ -74,4 +77,3 @@
 .a6y-stream-actions .action:disabled {
   cursor: not-allowed;
 }
-

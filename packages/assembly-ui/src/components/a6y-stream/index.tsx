@@ -206,6 +206,7 @@ export const A6yStream: FC<StreamProps> = ({
         'a6y-normal': role === RoleType.NORMAL,
         'a6y-playing':
           cameraStream?.video && publishedStreams.includes(cameraStream?.uid),
+        'a6y-mirror': !isSelf,
       })}
       ref={attachElRef}>
       <div className="a6y-stream-username">{username}</div>
