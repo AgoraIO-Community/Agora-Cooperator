@@ -23,7 +23,10 @@ const toggleFocusMode = (mainWindow: BrowserWindow, enabled: boolean) => {
   mainWindow.setBackgroundColor('#00000000');
   mainWindow.setFullScreen(enabled && process.platform !== 'darwin');
   mainWindow.setClosable(!enabled);
-  mainWindow.setIgnoreMouseEvents(enabled, { forward: true });
+  BrowserWindow.fromWebContents(mainWindow.webContents)?.setIgnoreMouseEvents(
+    enabled,
+    { forward: true },
+  );
   mainWindow.setAlwaysOnTop(enabled, 'screen-saver');
   mainWindow.setVisibleOnAllWorkspaces(enabled);
 };
@@ -50,8 +53,8 @@ const createWindow = async () => {
   let mainWindow: BrowserWindow | null = null;
   const { height, width } = screen.getPrimaryDisplay().workAreaSize;
   mainWindow = new BrowserWindow({
-    height,
-    width,
+    height: process.platform === 'win32' ? 1024 : height,
+    width: process.platform === 'win32' ? 768 : width,
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
@@ -63,7 +66,10 @@ const createWindow = async () => {
     enableLargerThanScreen: true,
     titleBarStyle: 'hiddenInset',
   });
-  toggleFocusMode(mainWindow, false);
+  mainWindow.once('ready-to-show', () => {
+    mainWindow?.show();
+    mainWindow?.maximize();
+  });
   registerIpcListeners(mainWindow);
   if (__DEV__) {
     mainWindow.loadURL('http://localhost:3000');
