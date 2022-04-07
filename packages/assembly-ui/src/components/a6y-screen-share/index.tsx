@@ -18,7 +18,7 @@ export interface A6yScreenShareProps {
 export const A6yScreenShare: FC<A6yScreenShareProps> = ({
   profileInSession,
 }) => {
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line
   const [[height, width], setSize] = useState([0, 0]);
   const [[fbHeight, fbWidth], setFbSize] = useState([0, 0]);
   const [[fbTop, fbLeft], setFbPosition] = useState([0, 0]);
