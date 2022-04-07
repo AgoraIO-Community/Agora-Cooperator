@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { TitlebarProvider } from './hooks';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import './index.css';
 
 ReactDOM.render(
   <TitlebarProvider>
