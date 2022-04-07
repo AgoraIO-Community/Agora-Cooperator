@@ -1,6 +1,7 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import { Fastboard } from '@netless/fastboard-react';
 import { useFastBoard, useIgnoreMouseEvent } from '../../hooks';
+import './index.css';
 
 const LANGUAGES: { [key: string]: 'en' | 'zh-CN' } = {
   'en-US': 'en',
@@ -22,6 +23,52 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = ({ markable, style }) => {
     }
     fastBoard.cleanCurrentScene();
   }, [fastBoard, markable]);
+
+  useEffect(() => {
+    const mutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        console.log('mutation', mutation);
+        mutation.addedNodes.forEach((node) => {
+          console.log('fastboard-panel added', node);
+          if (node.nodeName === 'DIV') {
+            const element = node as HTMLDivElement;
+            const panelEl = element.querySelector('.fastboard-panel');
+            if (panelEl) {
+              panelEl.addEventListener(
+                'mouseenter',
+                ignoreMouseEvent.onMouseEnter,
+              );
+              panelEl.addEventListener(
+                'mouseleave',
+                ignoreMouseEvent.onMouseLeave,
+              );
+            }
+          }
+        });
+        mutation.removedNodes.forEach((node) => {
+          console.log('fastboard-panel removed', node);
+          if (node.nodeName === 'DIV') {
+            const element = node as HTMLDivElement;
+            const panelEl = element.querySelector('.fastboard-panel');
+            if (panelEl) {
+              panelEl.removeEventListener(
+                'mouseenter',
+                ignoreMouseEvent.onMouseEnter,
+              );
+              panelEl.removeEventListener(
+                'mouseleave',
+                ignoreMouseEvent.onMouseLeave,
+              );
+            }
+          }
+        });
+      });
+    });
+    mutationObserver.observe(document.body, { childList: true });
+    return () => {
+      mutationObserver.disconnect();
+    };
+  }, [ignoreMouseEvent]);
 
   return markable ? (
     <div {...ignoreMouseEvent} style={style} className="a6y-fastboard-wrap">
