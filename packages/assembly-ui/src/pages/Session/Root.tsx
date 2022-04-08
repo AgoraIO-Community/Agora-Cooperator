@@ -133,7 +133,7 @@ export const Root = () => {
       if (!payload.screenShare && payload.video) {
         Modal.confirm({
           title: `${payload.username} ${intl.formatMessage({
-            id: 'modal.invite.audio.title',
+            id: 'modal.invite.video.title',
           })}`,
           onOk: updateDeviceState,
         });
