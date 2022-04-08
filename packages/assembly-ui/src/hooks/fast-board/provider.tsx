@@ -21,7 +21,7 @@ export const FastBoardProvider: FC = ({ children }) => {
         region: 'cn-hz', // "cn-hz" | "us-sv" | "sg" | "in-mum" | "gb-lon"
       },
       joinRoom: {
-        uid: id,
+        uid: profile.username,
         uuid: uuid,
         roomToken: token,
       },
