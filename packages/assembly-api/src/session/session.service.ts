@@ -6,6 +6,7 @@ import { SessionEntity } from './session.entity';
 import * as dayjs from 'dayjs';
 import { SignalService } from '../signal/signal.service';
 import { SignalKind } from 'assembly-shared';
+import { WhiteboardService } from '../whiteboard/whiteboard.service';
 
 @Injectable()
 export class SessionService {
@@ -16,11 +17,13 @@ export class SessionService {
     private config: ConfigService,
     @Inject(SignalService)
     private signalService: SignalService,
+    @Inject(WhiteboardService)
+    private whiteboardService: WhiteboardService,
   ) {}
 
   async createSession(
     channel: string,
-  ): Promise<Omit<SessionEntity, 'robotId'>> {
+  ): Promise<Omit<SessionEntity, 'robotId' | 'wUUID'>> {
     const [sessions, count] = await this.repository.findAndCount({
       where: { channel, expiredAt: MoreThanOrEqual(new Date()) },
       select: ['id', 'channel', 'expiredAt', 'createdAt'],
@@ -38,12 +41,14 @@ export class SessionService {
       SignalKind.ROBOT,
       expiredAt,
     );
-    const { robotId, ...reset } = await this.repository.save(
+    const uuid = await this.whiteboardService.retrieveNetlessRoomUUID();
+    const { robotId, wUUID, ...reset } = await this.repository.save(
       this.repository.create({
         channel,
         expiredAt,
         createdAt: now,
         robot,
+        wUUID: uuid,
       }),
     );
     return { ...reset };

@@ -19,6 +19,9 @@ export class SessionEntity implements Session {
   @Column()
   channel: string;
 
+  @Column()
+  wUUID: string;
+
   @Column({ type: 'timestamp' })
   expiredAt: Date;
 

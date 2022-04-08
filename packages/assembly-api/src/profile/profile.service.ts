@@ -47,6 +47,7 @@ export class ProfileService {
       session.expiredAt,
     );
     const whiteboard = await this.whiteboardService.createWhiteboard(
+      session.wUUID,
       session.expiredAt,
       role,
     );

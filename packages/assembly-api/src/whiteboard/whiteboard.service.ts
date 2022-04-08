@@ -16,10 +16,10 @@ export class WhiteboardService {
   ) {}
 
   async createWhiteboard(
+    uuid: string,
     expiredAt: Date,
     role: RoleType,
   ): Promise<WhiteboardEntity> {
-    const uuid = await this.retrieveNetlessRoomUUID();
     const whiteboardRole =
       role === RoleType.HOST ? NetlessRole.ADMIN : NetlessRole.WRITER;
     const now = new Date();
@@ -40,7 +40,7 @@ export class WhiteboardService {
     return await this.whiteboardRepository.save(whiteboard);
   }
 
-  private async retrieveNetlessRoomUUID() {
+  async retrieveNetlessRoomUUID() {
     try {
       const {
         data: { uuid },
