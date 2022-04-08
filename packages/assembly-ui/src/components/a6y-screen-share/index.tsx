@@ -6,12 +6,10 @@ import './index.css';
 import { A6yFastBoard } from '../a6y-fast-board';
 import { RDCRoleType } from 'agora-rdc-electron';
 
-const ASPECT_RATIO = 9 / 16;
-
-const WORK_AREA_HEIGHT_MAPS: {[k: string]: number} = {
-  'darwin': 178,
-  'win32': 170,
-}
+const WORK_AREA_HEIGHT_MAPS: { [k: string]: number } = {
+  darwin: 166,
+  win32: 138,
+};
 export interface A6yScreenShareProps {
   profileInSession: ProfileInSession;
 }
@@ -21,7 +19,6 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
   // eslint-disable-next-line
   const [[height, width], setSize] = useState([0, 0]);
   const [[fbHeight, fbWidth], setFbSize] = useState([0, 0]);
-  const [[fbTop, fbLeft], setFbPosition] = useState([0, 0]);
   const attachElRef = useRef<HTMLDivElement>(null);
   const { rtcEngine, rdcEngine, publishedStreams, authorizedControlUids } =
     useEngines();
@@ -36,13 +33,10 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
   );
 
   const updateSize = useCallback(() => {
-    const height = window.innerHeight - (WORK_AREA_HEIGHT_MAPS[process.platform] ?? 180);
-    const width = window.innerWidth - 280;
-    if (height < width * ASPECT_RATIO) {
-      setSize([width * ASPECT_RATIO, width]);
-    } else {
-      setSize([height / ASPECT_RATIO, height]);
-    }
+    const height =
+      window.innerHeight - (WORK_AREA_HEIGHT_MAPS[process.platform] ?? 138);
+    const width = window.innerWidth - 232;
+    setSize([height, width]);
   }, [setSize]);
 
   useEffect(() => {
@@ -129,7 +123,6 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
           const { width: cWidth, height: cHeight, style } = renderingEl;
           // @ts-ignore TS2339: Property 'zoom' does not exist on type 'CSSStyleDeclaration'.
           const zoom = Number(style.zoom);
-          setFbPosition([renderingEl.offsetTop, renderingEl.offsetLeft - 15]);
           setFbSize([cHeight * zoom, cWidth * zoom]);
         }
       });
@@ -148,19 +141,19 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
       className={cls({
         'a6y-screen-share': 1,
         playing: isSubscribed,
-      })}
-    >
+      })}>
       <div
         ref={attachElRef}
         style={{
           height: height === 0 ? '100%' : `${height}px`,
-          // width: width === 0 ? '100%' : `${width}px`,
-        }}
-      ></div>
-      <A6yFastBoard
-        markable={profileInSession.markable}
-        style={{ height: fbHeight, width: fbWidth, left: fbLeft, top: fbTop }}
-      />
+          width: width === 0 ? '100%' : `${width}px`,
+        }}></div>
+      <div className="a6y-fastboard-container">
+        <A6yFastBoard
+          markable={profileInSession.markable}
+          style={{ height: fbHeight, width: fbWidth }}
+        />
+      </div>
     </div>
   );
 };
