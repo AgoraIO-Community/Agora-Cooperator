@@ -36,6 +36,7 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
     const height =
       window.innerHeight - (WORK_AREA_HEIGHT_MAPS[process.platform] ?? 138);
     const width = window.innerWidth - 232;
+    console.log('updateSize', height, width);
     setSize([height, width]);
   }, [setSize]);
 
@@ -104,9 +105,9 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
 
   useEffect(() => {
     updateSize();
-    document.addEventListener('resize', updateSize);
+    window.addEventListener('resize', updateSize);
     return () => {
-      document.removeEventListener('resize', updateSize);
+      window.removeEventListener('resize', updateSize);
     };
   }, [updateSize]);
 
@@ -115,14 +116,34 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
     if (!attachEl) {
       return;
     }
+    let resizeObserver: ResizeObserver;
+    const handElResize: ResizeObserverCallback = (entries, _observer) => {
+      const entry = entries.find(
+        (entry) => entry.target instanceof HTMLCanvasElement,
+      );
+      if (!entry) {
+        return;
+      }
+      const target = entry.target as HTMLCanvasElement;
+      const { width: cWidth, height: cHeight, style } = target;
+      // @ts-ignore TS2339: Property 'zoom' does not exist on type 'CSSStyleDeclaration'.
+      const zoom = Number(style.zoom);
+      console.log('resize w', [cHeight * zoom, cWidth * zoom]);
+      setFbSize([cHeight * zoom, cWidth * zoom]);
+    };
     const mutationObserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         const targetEl = mutation.target as HTMLDivElement;
         const renderingEl = targetEl.querySelector('canvas');
         if (mutation.addedNodes.length > 0 && renderingEl) {
+          if (!resizeObserver) {
+            resizeObserver = new ResizeObserver(handElResize);
+            resizeObserver.observe(renderingEl);
+          }
           const { width: cWidth, height: cHeight, style } = renderingEl;
           // @ts-ignore TS2339: Property 'zoom' does not exist on type 'CSSStyleDeclaration'.
           const zoom = Number(style.zoom);
+          console.log('resize w', [cHeight * zoom, cWidth * zoom]);
           setFbSize([cHeight * zoom, cWidth * zoom]);
         }
       });
