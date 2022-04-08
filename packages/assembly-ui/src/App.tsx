@@ -74,6 +74,7 @@ const App = () => {
             onMaximize={handleMaximize}
             // when the titlebar is double clicked
             onDoubleClick={handleMaximize}
+            onClose={() => currentWindow.close()}
             // hide minimize windows control
             disableMinimize={false}
             // hide maximize windows control
