@@ -40,17 +40,17 @@ const messages = {
   'message.disable.audio.title': 'is disabled your microphone',
   'message.disable.video.title': 'is disabled your camera',
   'message.disable.screenShare.title': 'is stopped your screen share',
+  'message.invite.screenShare.request':
+    'You have invited {username} to start screen share.',
+  'message.rdc.unauthorized.title': '{username} is declined your request.',
+  'message.rdc.request': 'Request is successfully sent.',
+  'message.rdc.quit': 'Stop control.',
   'message.invite.audio.request.on':
     'You have invited {username} to turn on the microphone.',
   'message.invite.audio.request.off': `You have turned off {username}'s microphone.`,
   'message.invite.video.request.on':
     'You have invited {username} to turn on the camera.',
   'message.invite.video.request.off': `You have turned off {username}'s camera.`,
-  'message.invite.screenShare.request':
-    'You have invited {username} to start screen share.',
-  'message.rdc.unauthorized.title': '{username} is declined your request.',
-  'message.rdc.request': 'Request is successfully sent.',
-  'message.rdc.quit': 'Stop control.',
 };
 
 export default messages;
