@@ -1,3 +1,6 @@
 .a6y-focus-mode .fastboard-bottom-left {
   bottom: 28px;
 }
+.a6y-fastboard-wrap .fastboard-toolbar-btn.apps {
+  display: none;
+}
