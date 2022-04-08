@@ -13,7 +13,7 @@ export const FastBoardProvider: FC = ({ children }) => {
     }
     let instance: FastboardApp;
     const {
-      whiteboard: { appIdentifier, id, uuid, token },
+      whiteboard: { appIdentifier, uuid, token },
     } = profile;
     createFastboard({
       sdkConfig: {
