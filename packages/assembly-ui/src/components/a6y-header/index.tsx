@@ -2,6 +2,7 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import dayjs from 'dayjs';
 import { BiDownArrowAlt, BiUpArrowAlt, BiPencil } from 'react-icons/bi';
+import cls from 'classnames';
 import {
   useIgnoreMouseEvent,
   useEngines,
@@ -52,7 +53,12 @@ export const A6yHeader = () => {
           </span>
         </div>
       </div>
-      <button className="a6y-markable" onClick={toggleMarkable}>
+      <button
+        className={cls({
+          'a6y-markable': 1,
+          [`enabled`]: profile?.markable,
+        })}
+        onClick={toggleMarkable}>
         <BiPencil size={16} />
       </button>
     </div>

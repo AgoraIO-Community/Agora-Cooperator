@@ -17,26 +17,37 @@
 .a6y-header .a6y-timer {
   font-size: 12px;
 }
-.a6y-header .a6y-network-quality{
+.a6y-header .a6y-network-quality {
   display: flex;
   flex-direction: column;
   justify-content: center;
   margin-left: 18px;
 }
 .a6y-network-quality .a6y-upload,
-.a6y-network-quality .a6y-download{
+.a6y-network-quality .a6y-download {
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 20px
+  height: 20px;
 }
 
 .a6y-header .a6y-markable {
+  position: relative;
   display: none;
   background-color: transparent;
   border: none;
   outline: none;
   cursor: pointer;
+}
+
+.a6y-header .a6y-markable.enabled:after {
+  content: '\\';
+  display: block;
+  position: absolute;
+  top: -24px;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .a6y-focus-mode .ant-layout-header {
