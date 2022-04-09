@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl';
 import cls from 'classnames';
 import { useEngines } from '../../hooks';
 import './index.css';
+import { isWindows } from '../../utils';
 
 export type A6yScreenSelectorPurpose = 'screenShare' | 'rdc';
 
@@ -72,13 +73,16 @@ export const A6yScreenSelector: FC<A6yScreenSelectorProps> = ({
       onOk={handleOk}
       okButtonProps={{ disabled: !displayId }}
       width={616}
-      onCancel={onCancel}
-    >
-      <div className="a6y-with-audio">
-        <Checkbox checked={withAudio} onChange={() => setWithAudio(!withAudio)}>
-          {intl.formatMessage({ id: 'a6y.screen.selector.withAudio' })}
-        </Checkbox>
-      </div>
+      onCancel={onCancel}>
+      {isWindows() ? (
+        <div className="a6y-with-audio">
+          <Checkbox
+            checked={withAudio}
+            onChange={() => setWithAudio(!withAudio)}>
+            {intl.formatMessage({ id: 'a6y.screen.selector.withAudio' })}
+          </Checkbox>
+        </div>
+      ) : null}
       <div className="a6y-displays">
         {displays.map((display, index) => (
           <div
@@ -94,8 +98,7 @@ export const A6yScreenSelector: FC<A6yScreenSelectorProps> = ({
               if (purpose === 'rdc') {
                 setDisplayId(display);
               }
-            }}
-          >
+            }}>
             <div className="a6y-display-thumbnail">
               <img src={display.thumbnail} alt="display" />
             </div>
