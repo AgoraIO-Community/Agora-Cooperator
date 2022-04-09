@@ -1,10 +1,18 @@
-import { RDCStatus, SignalKind, StreamKind } from 'assembly-shared';
 import React, { FC, useEffect, useRef, useState, useCallback } from 'react';
+import { RDCStatus, SignalKind, StreamKind } from 'assembly-shared';
 import cls from 'classnames';
-import { useProfile, useEngines, ProfileInSession } from '../../hooks';
-import './index.css';
-import { A6yFastBoard } from '../a6y-fast-board';
+import { BiPencil, BiExitFullscreen, BiFullscreen } from 'react-icons/bi';
 import { RDCRoleType } from 'agora-rdc-electron';
+import { useToggle } from 'react-use';
+import {
+  useProfile,
+  useEngines,
+  ProfileInSession,
+  useSession,
+} from '../../hooks';
+import { A6yFastBoard } from '../a6y-fast-board';
+import { updateProfile } from '../../services/api';
+import './index.css';
 
 const WORK_AREA_HEIGHT_MAPS: { [k: string]: number } = {
   darwin: 166,
@@ -20,10 +28,13 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
   const [[height, width], setSize] = useState([0, 0]);
   const [[fbHeight, fbWidth], setFbSize] = useState([0, 0]);
   const attachElRef = useRef<HTMLDivElement>(null);
+  const screenShareElRef = useRef<HTMLDivElement>(null);
   const { rtcEngine, rdcEngine, publishedStreams, authorizedControlUids } =
     useEngines();
+  const session = useSession();
   const { profile } = useProfile();
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isFullscreen, toggleFullscreen] = useToggle(false);
   const isSelf = profileInSession.id === profile?.id;
   const rdcSignal = profileInSession.signals.find(
     (s) => s.kind === SignalKind.RDC,
@@ -39,6 +50,15 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
     console.log('updateSize', height, width);
     setSize([height, width]);
   }, [setSize]);
+
+  const toggleMarkable = async () => {
+    if (!session || !profileInSession) {
+      return;
+    }
+    await updateProfile(session.id, profileInSession.id, {
+      markable: !profileInSession.markable,
+    });
+  };
 
   useEffect(() => {
     const attachEl = attachElRef.current;
@@ -157,24 +177,66 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
     };
   }, [attachElRef]);
 
+  useEffect(() => {
+    const screenShareEl = screenShareElRef.current;
+    if (!screenShareEl) {
+      return;
+    }
+    if (isFullscreen) {
+      screenShareEl.requestFullscreen();
+    }
+    if (!isFullscreen && document.fullscreenElement) {
+      document.exitFullscreen();
+    }
+  }, [isFullscreen, screenShareElRef]);
+
   return (
     <div
+      style={{
+        height: isFullscreen ? '100%' : undefined,
+        width: isFullscreen ? '100%' : undefined,
+      }}
       className={cls({
         'a6y-screen-share': 1,
         playing: isSubscribed,
-      })}>
+      })}
+      ref={screenShareElRef}>
       <div
+        className="a6y-screen-share-container"
         ref={attachElRef}
         style={{
-          height: height === 0 ? '100%' : `${height}px`,
-          width: width === 0 ? '100%' : `${width}px`,
+          height: height === 0 || isFullscreen ? '100%' : `${height}px`,
+          width: width === 0 || isFullscreen ? '100%' : `${width}px`,
         }}></div>
-      <div className="a6y-fastboard-container">
-        <A6yFastBoard
-          markable={profileInSession.markable}
-          style={{ height: fbHeight, width: fbWidth }}
-        />
-      </div>
+      {profileInSession.screenShare ? (
+        <div className="a6y-fastboard-container">
+          <A6yFastBoard
+            markable={profileInSession.markable}
+            style={{ height: fbHeight, width: fbWidth }}
+          />
+        </div>
+      ) : null}
+      {
+        <div className="a6y-screen-share-controls">
+          {profileInSession.screenShare ? (
+            <button
+              className={cls({
+                'a6y-markable': 1,
+                [`enabled`]: profileInSession?.markable,
+              })}
+              onClick={toggleMarkable}>
+              <BiPencil size={16} />
+            </button>
+          ) : null}
+          <button className="a6y-fullscreen" onClick={toggleFullscreen}>
+            {isFullscreen ? (
+              <BiExitFullscreen size={16} />
+            ) : (
+              <BiFullscreen size={16} />
+            )}
+          </button>
+        </div>
+      }
     </div>
   );
 };
