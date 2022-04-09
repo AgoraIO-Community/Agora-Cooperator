@@ -23,6 +23,7 @@ import { updateProfile } from '../../services/api';
 import { Commands } from '../../services/Signalling';
 import { useIntl } from 'react-intl';
 import { RDCRoleType } from 'agora-rdc-electron';
+import { ipcRenderer } from 'electron';
 
 export const Root = () => {
   useCheckInOut();
@@ -127,7 +128,13 @@ export const Root = () => {
             id: 'modal.invite.audio.title',
           })}`,
           onOk: updateDeviceState,
+          afterClose: () => {
+            ipcRenderer.send('set-ignore-mouse-events', true, {
+              forward: true,
+            });
+          },
         });
+        ipcRenderer.send('set-ignore-mouse-events', false);
         return;
       }
       if (!payload.screenShare && payload.video) {
@@ -136,7 +143,13 @@ export const Root = () => {
             id: 'modal.invite.video.title',
           })}`,
           onOk: updateDeviceState,
+          afterClose: () => {
+            ipcRenderer.send('set-ignore-mouse-events', true, {
+              forward: true,
+            });
+          },
         });
+        ipcRenderer.send('set-ignore-mouse-events', false);
         return;
       }
       if (payload.screenShare && payload.video) {
@@ -156,7 +169,10 @@ export const Root = () => {
           })}`,
         );
       }
-      if (payload.video === false && typeof payload.screenShare === 'undefined') {
+      if (
+        payload.video === false &&
+        typeof payload.screenShare === 'undefined'
+      ) {
         message.info(
           `${payload.username} ${intl.formatMessage({
             id: 'message.disable.video.title',
@@ -277,20 +293,22 @@ export const Root = () => {
           <A6yHeader />
         </Layout.Header>
         <Layout>
-          <Layout.Content className="a6y-screen-shares">
-            <Tabs>
-              {profilesInSession
-                .filter(
-                  (p) =>
-                    (p.screenShare || p.rdcStatus === RDCStatus.ACTIVE) &&
-                    p.id !== profile?.id,
-                )
-                .map((p) => (
-                  <Tabs.TabPane key={p.id} tab={p.username}>
-                    <A6yScreenShare profileInSession={p} />
-                  </Tabs.TabPane>
-                ))}
-            </Tabs>
+          <Layout.Content>
+            <div className="a6y-screen-shares">
+              <Tabs>
+                {profilesInSession
+                  .filter(
+                    (p) =>
+                      (p.screenShare || p.rdcStatus === RDCStatus.ACTIVE) &&
+                      p.id !== profile?.id,
+                  )
+                  .map((p) => (
+                    <Tabs.TabPane key={p.id} tab={p.username}>
+                      <A6yScreenShare profileInSession={p} />
+                    </Tabs.TabPane>
+                  ))}
+              </Tabs>
+            </div>
           </Layout.Content>
           <Layout.Sider
             width={216}
