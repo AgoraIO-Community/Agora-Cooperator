@@ -65,9 +65,11 @@
   border-bottom-right-radius: 4px;
 }
 
-.a6y-stream-actions .action {
+.a6y-stream-actions .action,
+.a6y-stream-actions .action > button {
   display: flex;
   align-items: center;
+  justify-content: center;
   background-color: transparent;
   border: none;
   outline: none;
