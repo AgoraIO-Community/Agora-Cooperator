@@ -18,7 +18,7 @@ import {
   A6yScreenSelectorPurpose,
 } from '../../components';
 import './index.css';
-import { RDCStatus, StreamKind, SignalKind } from 'assembly-shared';
+import { RDCStatus, StreamKind, SignalKind, RoleType } from 'assembly-shared';
 import { updateProfile } from '../../services/api';
 import { Commands } from '../../services/Signalling';
 import { useIntl } from 'react-intl';
@@ -34,6 +34,7 @@ export const Root = () => {
   const intl = useIntl();
   const { setDisplayId, rdcEngine } = useEngines();
   const [screenSelectorVisible, setScreenSelectorVisible] = useState(false);
+  const [activeTabKey, setActiveTabKey] = useState<string>();
   const [screenSelectorPurpose, setScreenSelectorPurpose] =
     useState<A6yScreenSelectorPurpose>();
   const [screenSelectorTitle, setScreenSelectorTitle] = useState<string>();
@@ -41,14 +42,6 @@ export const Root = () => {
   const screenStream = profile?.streams.find(
     (s) => s.kind === StreamKind.SCREEN,
   );
-
-  useEffect(() => {
-    if (profile && profile.screenShare) {
-      document.body.classList.add('a6y-focus-mode');
-    } else {
-      document.body.classList.remove('a6y-focus-mode');
-    }
-  }, [profile]);
 
   const handleStartScreenShare = () => {
     setScreenSelectorPurpose('screenShare');
@@ -244,6 +237,14 @@ export const Root = () => {
   );
 
   useEffect(() => {
+    if (profile && profile.screenShare) {
+      document.body.classList.add('a6y-focus-mode');
+    } else {
+      document.body.classList.remove('a6y-focus-mode');
+    }
+  }, [profile]);
+
+  useEffect(() => {
     if (!signalling) {
       return;
     }
@@ -281,6 +282,16 @@ export const Root = () => {
     handleQuitControl,
   ]);
 
+  useEffect(() => {
+    const profileInSession = profilesInSession.find(
+      (p) => p.screenShare && p.role === RoleType.HOST,
+    );
+    if (!profileInSession) {
+      return;
+    }
+    setActiveTabKey(profileInSession.id);
+  }, [profilesInSession, setActiveTabKey]);
+
   return (
     <>
       <Layout
@@ -295,7 +306,9 @@ export const Root = () => {
         <Layout>
           <Layout.Content>
             <div className="a6y-screen-shares">
-              <Tabs>
+              <Tabs
+                activeKey={activeTabKey}
+                onTabClick={(activeKey) => setActiveTabKey(activeKey)}>
                 {profilesInSession
                   .filter(
                     (p) =>
