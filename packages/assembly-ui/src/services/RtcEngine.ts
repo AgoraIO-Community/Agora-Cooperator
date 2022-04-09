@@ -49,8 +49,6 @@ export class RtcEngine extends EventEmitter {
     this.instance.setClientRole(1);
     this.instance.enableVideo();
     this.instance.enableAudio();
-    this.instance.muteLocalAudioStream(true);
-    this.instance.muteLocalVideoStream(true);
     this.instance.enableLocalAudio(false);
     this.instance.enableLocalVideo(false);
     const code = this.instance.joinChannel(token, channel, '', uid);
@@ -71,17 +69,13 @@ export class RtcEngine extends EventEmitter {
   publishOrUnpublish(audio?: boolean, video?: boolean) {
     if (audio) {
       this.instance.enableLocalAudio(true);
-      this.instance.muteLocalAudioStream(false);
     } else {
       this.instance.enableLocalAudio(false);
-      this.instance.muteLocalAudioStream(true);
     }
     if (video) {
       this.instance.enableLocalVideo(true);
-      this.instance.muteLocalVideoStream(false);
     } else {
       this.instance.enableLocalVideo(false);
-      this.instance.muteLocalVideoStream(true);
     }
   }
 
@@ -178,8 +172,7 @@ export class RtcEngine extends EventEmitter {
   ) {
     let code = 0;
     if (isWindows() && withAudio) {
-      this.instance.videoSourceEnableAudio();
-      this.instance.videoSourceEnableLoopbackRecording(true);
+      this.instance.enableLoopbackRecording(true);
     }
     if (isMacOS() && withAudio) {
       console.warn('Loopback is not supported on macOS');
@@ -228,8 +221,7 @@ export class RtcEngine extends EventEmitter {
   }
 
   public async unpublishFSS(isDisplay: boolean = true) {
-    this.instance.videoSourceEnableLoopbackRecording(false);
-    this.instance.videoSourceDisableAudio();
+    this.instance.enableLoopbackRecording(false);
     let code = this.instance.stopScreenCapture2();
     if (code !== 0) {
       throw new Error(
