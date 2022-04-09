@@ -16,7 +16,7 @@ const toggleFocusMode = (mainWindow: BrowserWindow, enabled: boolean) => {
   mainWindow.setHasShadow(!enabled);
   mainWindow.setMovable(!enabled);
   mainWindow.setResizable(!enabled);
-  mainWindow.setBackgroundColor('#00000000');
+  mainWindow.setBackgroundColor(enabled ? '#00000000' : '#000000');
   mainWindow.setFullScreen(enabled && process.platform !== 'darwin');
   mainWindow.setClosable(!enabled);
   BrowserWindow.fromWebContents(mainWindow.webContents)?.setIgnoreMouseEvents(
@@ -66,6 +66,7 @@ const createWindow = async () => {
     frame: false,
     enableLargerThanScreen: true,
     titleBarStyle: 'hiddenInset',
+    backgroundColor: '#000000',
   });
   mainWindow.once('ready-to-show', () => {
     mainWindow?.show();
