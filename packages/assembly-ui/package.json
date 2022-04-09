@@ -1,6 +1,6 @@
 {
   "name": "assembly-ui",
-  "version": "0.0.1-alpha.6",
+  "version": "0.0.1-alpha.7",
   "homepage": "./",
   "main": "build/electron/main.js",
   "private": true,
@@ -17,7 +17,7 @@
     "agora-rdc-electron": "^1.0.0",
     "agora-rtm-sdk": "^1.4.4",
     "antd": "^4.19.3",
-    "assembly-shared": "workspace:^0.0.1-alpha.6",
+    "assembly-shared": "workspace:^0.0.1-alpha.7",
     "axios": "^0.26.1",
     "classnames": "^2.3.1",
     "dayjs": "^1.11.0",
