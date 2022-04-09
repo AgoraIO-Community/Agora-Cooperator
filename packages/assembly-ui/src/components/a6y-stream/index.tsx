@@ -249,6 +249,7 @@ export const A6yStream: FC<StreamProps> = ({
           {profile?.role === RoleType.HOST && !isSelf ? (
             <Tooltip
               placement="bottomLeft"
+              visible={screenShare ? false : undefined}
               overlay={
                 screenStream?.video
                   ? intl.formatMessage({ id: 'a6y.stream.rdc.off' })
@@ -257,13 +258,14 @@ export const A6yStream: FC<StreamProps> = ({
               <button
                 className="action"
                 onClick={handleRemoteDesktop}
-                disabled={profile?.screenShare}>
+                disabled={screenShare}>
                 <ImDisplay size={16} />
               </button>
             </Tooltip>
           ) : null}
           <Tooltip
             placement="bottomLeft"
+            visible={rdcStatus !== RDCStatus.IDLE ? false : undefined}
             overlay={
               screenStream?.video
                 ? intl.formatMessage({ id: 'a6y.stream.screenShare.off' })

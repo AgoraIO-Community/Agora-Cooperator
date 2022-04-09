@@ -29,6 +29,7 @@
   transition: all 0.3s ease-in-out;
   border-radius: 4px;
 }
+
 .a6y-stream.a6y-mirror > div > canvas {
   transform: rotateY(180deg);
 }
@@ -78,4 +79,9 @@
 
 .a6y-stream-actions .action:disabled {
   cursor: not-allowed;
+}
+
+.a6y-stream-actions .action:disabled > svg,
+.a6y-stream-actions .action > button:disabled > svg {
+  opacity: 0.5;
 }
