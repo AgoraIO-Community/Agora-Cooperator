@@ -23,8 +23,6 @@ export enum RtcEngineEvents {
 
 export class RtcEngine extends EventEmitter {
   private static instance: RtcEngine;
-  private audio = false;
-  private video = false;
 
   static singleton(appId: string) {
     if (!this.instance) {
@@ -71,16 +69,20 @@ export class RtcEngine extends EventEmitter {
   }
 
   publishOrUnpublish(audio?: boolean, video?: boolean) {
-    if (this.audio !== audio) {
-      this.instance.muteLocalAudioStream(!audio);
-      this.instance.muteLocalVideoStream(!video);
+    if (audio) {
+      this.instance.enableLocalAudio(true);
+      this.instance.muteLocalAudioStream(false);
+    } else {
+      this.instance.enableLocalAudio(false);
+      this.instance.muteLocalAudioStream(true);
     }
-    if (this.video !== video) {
-      this.instance.enableLocalVideo(!!video);
-      this.instance.enableLocalAudio(!!audio);
+    if (video) {
+      this.instance.enableLocalVideo(true);
+      this.instance.muteLocalVideoStream(false);
+    } else {
+      this.instance.enableLocalVideo(false);
+      this.instance.muteLocalVideoStream(true);
     }
-    this.audio = !!audio;
-    this.video = !!video;
   }
 
   async subscribe(
