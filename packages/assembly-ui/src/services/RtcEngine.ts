@@ -176,6 +176,7 @@ export class RtcEngine extends EventEmitter {
   ) {
     let code = 0;
     if (isWindows() && withAudio) {
+      this.instance.videoSourceEnableAudio();
       this.instance.enableLoopbackRecording(true);
     }
     if (isMacOS() && withAudio) {
@@ -225,6 +226,7 @@ export class RtcEngine extends EventEmitter {
   }
 
   public async unpublishFSS(isDisplay: boolean = true) {
+    this.instance.videoSourceDisableAudio();
     let code = this.instance.stopScreenCapture2();
     if (code !== 0) {
       throw new Error(
