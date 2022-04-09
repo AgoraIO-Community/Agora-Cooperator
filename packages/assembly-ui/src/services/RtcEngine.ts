@@ -179,7 +179,7 @@ export class RtcEngine extends EventEmitter {
     let code = 0;
     if (isWindows() && withAudio) {
       this.instance.videoSourceEnableAudio();
-      this.instance.enableLoopbackRecording(true);
+      this.instance.videoSourceEnableLoopbackRecording(true);
     }
     if (isMacOS() && withAudio) {
       console.warn('Loopback is not supported on macOS');
@@ -228,6 +228,7 @@ export class RtcEngine extends EventEmitter {
   }
 
   public async unpublishFSS(isDisplay: boolean = true) {
+    this.instance.videoSourceEnableLoopbackRecording(false);
     this.instance.videoSourceDisableAudio();
     let code = this.instance.stopScreenCapture2();
     if (code !== 0) {
