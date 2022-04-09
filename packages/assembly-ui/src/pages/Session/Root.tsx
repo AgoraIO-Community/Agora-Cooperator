@@ -156,7 +156,7 @@ export const Root = () => {
           })}`,
         );
       }
-      if (payload.video === false) {
+      if (payload.video === false && typeof payload.screenShare === 'undefined') {
         message.info(
           `${payload.username} ${intl.formatMessage({
             id: 'message.disable.video.title',
