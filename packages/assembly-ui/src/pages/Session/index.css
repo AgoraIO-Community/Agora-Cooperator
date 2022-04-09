@@ -35,3 +35,7 @@
   left: 0;
   z-index: 99;
 }
+
+.a6y-focus-mode .a6y-screen-shares {
+  display: none;
+}
