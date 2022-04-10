@@ -14,6 +14,8 @@ const messages = {
   'landing.validate.name.min': 'Name must be greater than 3 characters.',
   'landing.validate.role.required': 'Please select role.',
   'session.header.channel': 'CHANNEL',
+  'session.controlledBy': 'your computer is controlled by {username}',
+  'session.confirm.stopControl': 'Are you sure you want to stop control?',
   'a6y.stream.audio.off': 'Disable Microphone',
   'a6y.stream.audio.on': 'Enable Microphone',
   'a6y.stream.audio.on.request': 'Request enable Microphone',

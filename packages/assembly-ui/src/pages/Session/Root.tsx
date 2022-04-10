@@ -24,6 +24,7 @@ import { Commands } from '../../services/Signalling';
 import { useIntl } from 'react-intl';
 import { RDCRoleType } from 'agora-rdc-electron';
 import { ipcRenderer, remote } from 'electron';
+import { BiStopCircle } from 'react-icons/bi';
 
 export const Root = () => {
   useCheckInOut();
@@ -73,6 +74,38 @@ export const Root = () => {
     });
     rdcEngine.authorizeControl(signal.uid, displayId);
     setScreenSelectorVisible(false);
+    message.warn({
+      content: (
+        <>
+          <span>
+            {intl
+              .formatMessage({
+                id: 'session.controlledBy',
+              })
+              .replace('{username}', controlledBy?.username ?? '')}
+          </span>
+          <BiStopCircle
+            style={{
+              verticalAlign: 'middle',
+              marginLeft: 8,
+              color: '#a61d24',
+              cursor: 'pointer',
+            }}
+            size={18}
+            onClick={() => {
+              Modal.confirm({
+                content: intl.formatMessage({
+                  id: 'session.confirm.stopControl',
+                }),
+                onOk: handleStopControl,
+              });
+            }}
+          />
+        </>
+      ),
+      duration: 0,
+      key: controlledBy?.id,
+    });
   };
 
   const handleScreenSelectorCancel = useCallback(async () => {
@@ -219,8 +252,9 @@ export const Root = () => {
           .formatMessage({ id: 'message.rdc.unauthorized.title' })
           .replace('{username}', profile.username),
       );
+      setControlledBy(undefined);
     },
-    [intl, profilesInSession],
+    [intl, profilesInSession, setControlledBy],
   );
 
   const handleQuitControl = useCallback(
@@ -232,9 +266,22 @@ export const Root = () => {
         return;
       }
       rdcEngine.quitControl(signal.uid, RDCRoleType.CONTROLLED);
+      message.destroy(controlledBy?.id);
+      setControlledBy(undefined);
     },
-    [rdcEngine, controlledBy],
+    [rdcEngine, controlledBy, setControlledBy],
   );
+
+  const handleStopControl = useCallback(async () => {
+    if (!profile || !session || !screenStream) {
+      return;
+    }
+    handleQuitControl();
+    await updateProfile(session.id, profile.id, {
+      rdcStatus: RDCStatus.IDLE,
+      streams: [{ id: screenStream.id, video: false, audio: false }],
+    });
+  }, [handleQuitControl, session, profile, screenStream]);
 
   const handleScreenLocked = useCallback(async () => {
     if (!session || !profile || !screenStream) {
@@ -242,14 +289,13 @@ export const Root = () => {
     }
     if (profile.rdcStatus === RDCStatus.ACTIVE) {
       handleQuitControl();
-      setControlledBy(undefined);
       await updateProfile(session.id, profile.id, {
         rdcStatus: RDCStatus.IDLE,
         markable: false,
         streams: [{ id: screenStream.id, video: false, audio: false }],
       });
     }
-  }, [session, profile, screenStream]);
+  }, [session, profile, screenStream, handleQuitControl]);
 
   useEffect(() => {
     if (profile && profile.screenShare) {

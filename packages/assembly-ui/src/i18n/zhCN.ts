@@ -12,6 +12,8 @@ const messages = {
   'landing.validate.name.min': '昵称长度必须大于3个字符',
   'landing.validate.role.required': '请选择角色',
   'session.header.channel': '教室名称',
+  'session.controlledBy': '你的电脑正在被{username}控制',
+  'session.confirm.stopControl': '你确定要停止控制吗？',
   'a6y.stream.audio.off': '关闭麦克风',
   'a6y.stream.audio.on': '打开麦克风',
   'a6y.stream.audio.on.request': '邀请打开麦克风',
