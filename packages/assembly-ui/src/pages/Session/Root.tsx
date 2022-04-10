@@ -423,6 +423,7 @@ export const Root = () => {
             <div className="a6y-screen-shares">
               <Tabs
                 activeKey={activeTabKey}
+                destroyInactiveTabPane={true}
                 onTabClick={(activeKey) => setActiveTabKey(activeKey)}>
                 {profilesInSession
                   .filter(
