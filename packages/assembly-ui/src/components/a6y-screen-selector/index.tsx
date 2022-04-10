@@ -74,7 +74,7 @@ export const A6yScreenSelector: FC<A6yScreenSelectorProps> = ({
       okButtonProps={{ disabled: !displayId }}
       width={616}
       onCancel={onCancel}>
-      {isWindows() ? (
+      {isWindows() && purpose === 'screenShare' ? (
         <div className="a6y-with-audio">
           <Checkbox
             checked={withAudio}
