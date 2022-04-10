@@ -23,7 +23,7 @@ import { updateProfile } from '../../services/api';
 import { Commands } from '../../services/Signalling';
 import { useIntl } from 'react-intl';
 import { RDCRoleType } from 'agora-rdc-electron';
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, remote } from 'electron';
 
 export const Root = () => {
   useCheckInOut();
@@ -224,7 +224,7 @@ export const Root = () => {
   );
 
   const handleQuitControl = useCallback(
-    (uid: string) => {
+    (uid?: string) => {
       const signal = controlledBy?.signals.find(
         (s) => s.kind === SignalKind.RDC,
       );
@@ -235,6 +235,21 @@ export const Root = () => {
     },
     [rdcEngine, controlledBy],
   );
+
+  const handleScreenLocked = useCallback(async () => {
+    if (!session || !profile || !screenStream) {
+      return;
+    }
+    if (profile.rdcStatus === RDCStatus.ACTIVE) {
+      handleQuitControl();
+      setControlledBy(undefined);
+      await updateProfile(session.id, profile.id, {
+        rdcStatus: RDCStatus.IDLE,
+        markable: false,
+        streams: [{ id: screenStream.id, video: false, audio: false }],
+      });
+    }
+  }, [session, profile, screenStream]);
 
   useEffect(() => {
     if (profile && profile.screenShare) {
@@ -292,6 +307,13 @@ export const Root = () => {
     setActiveTabKey(profileInSession.id);
   }, [profilesInSession, setActiveTabKey]);
 
+  useEffect(() => {
+    remote.powerMonitor.on('lock-screen', handleScreenLocked);
+    return () => {
+      remote.powerMonitor.off('lock-screen', handleScreenLocked);
+    };
+  }, [handleScreenLocked]);
+
   return (
     <>
       <Layout
@@ -337,13 +359,15 @@ export const Root = () => {
         </Layout>
       </Layout>
       <A6yFastBoard markable={profile?.markable} />
-      <A6yScreenSelector
-        title={screenSelectorTitle}
-        purpose={screenSelectorPurpose}
-        visible={screenSelectorVisible}
-        onOk={handleScreenSelectorOk}
-        onCancel={handleScreenSelectorCancel}
-      />
+      {screenSelectorVisible ? (
+        <A6yScreenSelector
+          title={screenSelectorTitle}
+          purpose={screenSelectorPurpose}
+          visible={screenSelectorVisible}
+          onOk={handleScreenSelectorOk}
+          onCancel={handleScreenSelectorCancel}
+        />
+      ) : null}
     </>
   );
 };
