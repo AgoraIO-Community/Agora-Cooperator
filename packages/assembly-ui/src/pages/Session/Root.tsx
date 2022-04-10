@@ -80,6 +80,10 @@ export const Root = () => {
       }
       await updateProfile(session.id, profile.id, {
         screenShare: !profile.screenShare,
+        screenVisibility:
+          profile.role === RoleType.HOST
+            ? ScreenVisibility.ALL
+            : ScreenVisibility.ONLY_HOST,
         streams,
       });
       setScreenSelectorVisible(false);
