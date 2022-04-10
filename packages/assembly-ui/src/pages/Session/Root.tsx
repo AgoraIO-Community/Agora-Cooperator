@@ -176,6 +176,13 @@ export const Root = () => {
           ],
         });
       Modal.destroyAll();
+      if (
+        (payload.audio || payload.screenShare || payload.video) &&
+        !remote.getCurrentWindow().isVisibleOnAllWorkspaces()
+      ) {
+        console.log('visible on all workspaces');
+        remote.getCurrentWindow().show();
+      }
       if (payload.audio) {
         Modal.confirm({
           title: `${payload.username} ${intl.formatMessage({
@@ -183,6 +190,9 @@ export const Root = () => {
           })}`,
           onOk: updateDeviceState,
           afterClose: () => {
+            if (!profile.screenShare) {
+              return;
+            }
             ipcRenderer.send('set-ignore-mouse-events', true, {
               forward: true,
             });
@@ -198,6 +208,9 @@ export const Root = () => {
           })}`,
           onOk: updateDeviceState,
           afterClose: () => {
+            if (!profile.screenShare) {
+              return;
+            }
             ipcRenderer.send('set-ignore-mouse-events', true, {
               forward: true,
             });
@@ -262,6 +275,10 @@ export const Root = () => {
           .replace('{username}', profile.username),
       );
       setScreenSelectorVisible(true);
+      if (!remote.getCurrentWindow().isVisibleOnAllWorkspaces()) {
+        console.log('visible on all workspaces');
+        remote.getCurrentWindow().show();
+      }
     },
     [setControlledBy, profilesInSession, intl],
   );
