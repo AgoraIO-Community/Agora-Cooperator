@@ -29,7 +29,7 @@ const messages = {
   'a6y.stream.screenShare.on.request': 'Request Screen Share',
   'a6y.screen.selector.screenShare.title':
     'Please select screen or window which you want to share.',
-  'a6y.screen.selector.withAudio': 'Share with audio at same time.',
+  'a6y.screen.selector.withAudio': 'Share with audio at same time. Check this box and your microphone will be turned on',
   'a6y.screen.selector.rdc.title':
     'Please select screen which you want to authorize.',
   'a6y.screen.selector.screenShare.ok': 'Share',

@@ -49,6 +49,9 @@ export const Root = () => {
   const screenStream = profile?.streams.find(
     (s) => s.kind === StreamKind.SCREEN,
   );
+  const cameraStream = profile?.streams.find(
+    (s) => s.kind === StreamKind.CAMERA,
+  );
 
   const handleStartScreenShare = () => {
     setScreenSelectorPurpose('screenShare');
@@ -56,14 +59,28 @@ export const Root = () => {
   };
 
   const handleScreenSelectorOk = async (displayId: any, withAudio: boolean) => {
-    if (!screenStream || !profile || !session || !setDisplayId) {
+    if (
+      !screenStream ||
+      !cameraStream ||
+      !profile ||
+      !session ||
+      !setDisplayId
+    ) {
       return;
     }
     if (screenSelectorPurpose === 'screenShare') {
       setDisplayId(displayId);
+      const streams = [{ id: screenStream.id, video: true, audio: withAudio }];
+      if (withAudio && !cameraStream.audio) {
+        streams.push({
+          id: cameraStream.id,
+          video: cameraStream.video,
+          audio: true,
+        });
+      }
       await updateProfile(session.id, profile.id, {
         screenShare: !profile.screenShare,
-        streams: [{ id: screenStream.id, video: true, audio: withAudio }],
+        streams,
       });
       setScreenSelectorVisible(false);
       return;
