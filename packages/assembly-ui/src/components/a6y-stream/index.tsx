@@ -3,6 +3,7 @@ import cls from 'classnames';
 import {
   RDCStatus,
   RoleType,
+  ScreenVisibility,
   SignalCommand,
   SignalKind,
   StreamKind,
@@ -123,6 +124,7 @@ export const A6yStream: FC<StreamProps> = ({
     if (isSelf && screenShare) {
       await updateProfile(session.id, profile.id, {
         screenShare: false,
+        screenVisibility: ScreenVisibility.ONLY_HOST,
         streams: [{ id: screenStream.id, video: false, audio: false }],
       });
       return;
@@ -160,6 +162,7 @@ export const A6yStream: FC<StreamProps> = ({
       rdcEngine.quitControl(rdcSignal.uid, rdcEngine.getRole());
       updateProfile(session.id, id, {
         rdcStatus: RDCStatus.IDLE,
+        screenVisibility: ScreenVisibility.ONLY_HOST,
         streams: [{ id: screenStream.id, video: false, audio: false }],
       });
       message.success(intl.formatMessage({ id: 'message.rdc.quit' }));

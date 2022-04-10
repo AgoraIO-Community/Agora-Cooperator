@@ -286,6 +286,7 @@ export const Root = () => {
     handleQuitControl();
     await updateProfile(session.id, profile.id, {
       rdcStatus: RDCStatus.IDLE,
+      screenVisibility: ScreenVisibility.ONLY_HOST,
       streams: [{ id: screenStream.id, video: false, audio: false }],
     });
   }, [handleQuitControl, session, profile, screenStream]);
@@ -298,6 +299,7 @@ export const Root = () => {
       handleQuitControl();
       await updateProfile(session.id, profile.id, {
         rdcStatus: RDCStatus.IDLE,
+        screenVisibility: ScreenVisibility.ONLY_HOST,
         markable: false,
         streams: [{ id: screenStream.id, video: false, audio: false }],
       });
