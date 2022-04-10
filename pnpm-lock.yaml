@@ -99,7 +99,7 @@ importers:
 
   packages/assembly-ui:
     specifiers:
-      '@netless/fastboard-react': 0.3.2-canary.4
+      '@netless/fastboard-react': 0.3.2-canary.5
       '@netless/window-manager': ^0.4.18
       '@testing-library/jest-dom': ^5.14.1
       '@testing-library/react': ^12.0.0
@@ -139,7 +139,7 @@ importers:
       webpack-node-externals: ^3.0.0
       white-web-sdk: ^2.16.10
     dependencies:
-      '@netless/fastboard-react': 0.3.2-canary.4_91d0e63e2c712b1ce972f2d3abea5cce
+      '@netless/fastboard-react': 0.3.2-canary.5_91d0e63e2c712b1ce972f2d3abea5cce
       '@netless/window-manager': 0.4.20_white-web-sdk@2.16.15
       agora-electron-sdk: 3.6.1-rc.1-build.122
       agora-rdc-electron: 1.0.0_f0b5267be483616494720417f600774b
@@ -3132,8 +3132,8 @@ packages:
     resolution: {integrity: sha512-7NzsJrba0R/mq/l10SkIZQwbrNVJyPxZYrjK6xL3Ts732iWAVuS2UB0u3s6iGeUVcqV39A679yva8APWRl4M0A==}
     dev: false
 
-  /@netless/fastboard-core/0.3.2-canary.4_d27d30c4dbe17a5c90fc01c65b13ebe6:
-    resolution: {integrity: sha512-cXnu9ronIYrJeb4UoHNGG3bSJUGIRIsk8+ko/QtA2ZE/h+paFD875OLPcae/LCihIfNEvbF3uzri3RMMYNqBtA==}
+  /@netless/fastboard-core/0.3.2-canary.5_d27d30c4dbe17a5c90fc01c65b13ebe6:
+    resolution: {integrity: sha512-EgfNuWQB+NLnQBcRTwR0zwt3xRb2d+lHksPy2uYRAcB/vl8Jz5prA2k7SYj3BIXk1TUFByXKRhX3EmnAfZsRsA==}
     peerDependencies:
       '@netless/window-manager': '>=0.4.0'
       white-web-sdk: '>=2.16.0'
@@ -3143,25 +3143,25 @@ packages:
       white-web-sdk: 2.16.15
     dev: false
 
-  /@netless/fastboard-react/0.3.2-canary.4_91d0e63e2c712b1ce972f2d3abea5cce:
-    resolution: {integrity: sha512-U1iLfwq2mOVR4Y6gLQRgMpaG1ndbKpXmEbb74re/qfVupJbqPkw5/rt0Nhh3QJQ+QJGVsAvY1PMoPvnjSNJwyw==}
+  /@netless/fastboard-react/0.3.2-canary.5_91d0e63e2c712b1ce972f2d3abea5cce:
+    resolution: {integrity: sha512-bVi1ye9BaDsSbWz50Y8B7tu1DVCQHtvJPBM5IE8kGIiNxnEkj5l7ghRiRaRlHLmbdQQDIWrZAxhypcoRI6fxjg==}
     peerDependencies:
       react: '*'
     dependencies:
-      '@netless/fastboard-core': 0.3.2-canary.4_d27d30c4dbe17a5c90fc01c65b13ebe6
-      '@netless/fastboard-ui': 0.3.2-canary.4_7df7e016b67615110ad33b57daee0d95
+      '@netless/fastboard-core': 0.3.2-canary.5_d27d30c4dbe17a5c90fc01c65b13ebe6
+      '@netless/fastboard-ui': 0.3.2-canary.5_1c8e71b86a3697141e023ea42b6bb36e
       react: 17.0.2
     transitivePeerDependencies:
       - '@netless/window-manager'
       - white-web-sdk
     dev: false
 
-  /@netless/fastboard-ui/0.3.2-canary.4_7df7e016b67615110ad33b57daee0d95:
-    resolution: {integrity: sha512-k9q7jnDBzGdXmkmXMyIjmjfDKTM8IZyZ/KmV3zHjnqfXuhXJ94Mu+45+WwL97lpV9kHkTM4LK+lIYJwYgLRZtg==}
+  /@netless/fastboard-ui/0.3.2-canary.5_1c8e71b86a3697141e023ea42b6bb36e:
+    resolution: {integrity: sha512-PzX0MHRCSrKZO2j/A/UkYVBHUeUQ9B61eWltYDtqTzWoAyN+8r3pRZub97Fa9bbukqzJuj2JDykbx7o9XVxS1Q==}
     peerDependencies:
-      '@netless/fastboard-core': 0.3.2-canary.4
+      '@netless/fastboard-core': 0.3.2-canary.5
     dependencies:
-      '@netless/fastboard-core': 0.3.2-canary.4_d27d30c4dbe17a5c90fc01c65b13ebe6
+      '@netless/fastboard-core': 0.3.2-canary.5_d27d30c4dbe17a5c90fc01c65b13ebe6
       tippy.js: 6.3.7
     dev: false
 

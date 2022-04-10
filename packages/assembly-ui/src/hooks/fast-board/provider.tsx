@@ -25,12 +25,14 @@ export const FastBoardProvider: FC = ({ children }) => {
         uuid: uuid,
         roomToken: token,
       },
-    }).then((app) => {
-      instance = app;
-      setFastBoard(instance);
-    }).catch((error) => {
-      console.error(error);
-    });
+    })
+      .then((app) => {
+        instance = app;
+        setFastBoard(instance);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     // return () => {
     //   if (instance) {
     //     instance.destroy();
