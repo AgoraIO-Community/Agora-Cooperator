@@ -22,6 +22,9 @@ export const useIgnoreMouseEvent = () => {
     if (profile?.markable) {
       ipcRenderer.send('set-ignore-mouse-events', false);
     }
+    if (profile?.screenShare && !profile.markable) {
+      ipcRenderer.send('set-ignore-mouse-events', true, { forward: true });
+    }
   }, [profile]);
 
   return { onMouseEnter, onMouseLeave };
