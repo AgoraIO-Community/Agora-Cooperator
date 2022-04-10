@@ -35,6 +35,8 @@ const messages = {
   'a6y.screen.selector.screenShare.ok': 'Share',
   'a6y.screen.selector.rdc.ok': 'Authorize',
   'a6y.screen.selector.display': 'Desktop',
+  'ay6.screenShare.screenVisibility.onlyHost': 'Only teacher is visible',
+  'ay6.screenShare.screenVisibility.all': 'All members is visible in session',
   'modal.invite.audio.title': 'invite you enable microphone',
   'modal.invite.video.title': 'invite you enable camera',
   'modal.invite.screenShare.title': 'invite you share your screen',

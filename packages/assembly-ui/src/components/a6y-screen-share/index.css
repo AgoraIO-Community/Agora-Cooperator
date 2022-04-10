@@ -54,7 +54,7 @@
 .a6y-screen-share-controls {
   position: absolute;
   top: 8px;
-  right: calc(50% - 36px);
+  right: calc(50% - 28px);
   width: 56px;
   height: 24px;
   border-radius: 4px;
@@ -65,15 +65,34 @@
   align-items: center;
   justify-content: center;
 }
+.a6y-screen-share-controls.host-controls {
+  width: 140px;
+  right: calc(50% - 70px);
+}
 
 .a6y-screen-share-controls .a6y-markable,
-.a6y-screen-share-controls .a6y-fullscreen {
+.a6y-screen-share-controls .a6y-fullscreen,
+.a6y-screen-share-controls .a6y-screen-visibility {
   display: flex;
+  padding: 0 8px 0 0;
   position: relative;
   background-color: transparent;
   border: none;
   outline: none;
   cursor: pointer;
+}
+
+.a6y-screen-share-controls .a6y-markable:last-child,
+.a6y-screen-share-controls .a6y-fullscreen:last-child,
+.a6y-screen-share-controls .a6y-screen-visibility:last-child {
+  padding: 0;
+}
+
+.a6y-screen-share-controls .a6y-screen-visibility {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .a6y-screen-share-controls .a6y-markable.enabled:after {

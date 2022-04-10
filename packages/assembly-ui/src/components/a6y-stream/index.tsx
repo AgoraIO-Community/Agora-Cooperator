@@ -277,7 +277,7 @@ export const A6yStream: FC<StreamProps> = ({
               className="action"
               onClick={handleScreenShare}
               disabled={rdcStatus !== RDCStatus.IDLE}>
-              {screenStream?.video && rdcStatus !== RDCStatus.ACTIVE? (
+              {screenStream?.video && rdcStatus !== RDCStatus.ACTIVE ? (
                 <MdOutlineScreenShare size={20} />
               ) : (
                 <MdOutlineStopScreenShare size={20} />

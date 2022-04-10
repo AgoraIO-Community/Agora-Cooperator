@@ -4,6 +4,7 @@ export const PROFILE_IN_SESSION_SELECT = {
   role: true,
   rdcStatus: true,
   screenShare: true,
+  screenVisibility: true,
   markable: true,
   createdAt: true,
   expiredAt: true,

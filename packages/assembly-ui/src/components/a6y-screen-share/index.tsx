@@ -1,5 +1,11 @@
 import React, { FC, useEffect, useRef, useState, useCallback } from 'react';
-import { RDCStatus, SignalKind, StreamKind } from 'assembly-shared';
+import {
+  RDCStatus,
+  RoleType,
+  ScreenVisibility,
+  SignalKind,
+  StreamKind,
+} from 'assembly-shared';
 import cls from 'classnames';
 import { BiPencil, BiExitFullscreen, BiFullscreen } from 'react-icons/bi';
 import { RDCRoleType } from 'agora-rdc-electron';
@@ -13,6 +19,8 @@ import {
 import { A6yFastBoard } from '../a6y-fast-board';
 import { updateProfile } from '../../services/api';
 import './index.css';
+import { Button, Dropdown, Menu, Select } from 'antd';
+import { useIntl } from 'react-intl';
 
 const WORK_AREA_HEIGHT_MAPS: { [k: string]: number } = {
   darwin: 166,
@@ -29,6 +37,7 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
   const [[fbHeight, fbWidth], setFbSize] = useState([0, 0]);
   const attachElRef = useRef<HTMLDivElement>(null);
   const screenShareElRef = useRef<HTMLDivElement>(null);
+  const intl = useIntl();
   const { rtcEngine, rdcEngine, publishedStreams, authorizedControlUids } =
     useEngines();
   const session = useSession();
@@ -42,6 +51,15 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
   const screenStream = profileInSession?.streams.find(
     (s) => s.kind === StreamKind.SCREEN,
   );
+
+  const SCREEN_VISIBILITY_MAP: { [key in ScreenVisibility]: string } = {
+    [ScreenVisibility.ONLY_HOST]: intl.formatMessage({
+      id: 'ay6.screenShare.screenVisibility.onlyHost',
+    }),
+    [ScreenVisibility.ALL]: intl.formatMessage({
+      id: 'ay6.screenShare.screenVisibility.all',
+    }),
+  };
 
   const updateSize = useCallback(() => {
     const height =
@@ -57,6 +75,15 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
     }
     await updateProfile(session.id, profileInSession.id, {
       markable: !profileInSession.markable,
+    });
+  };
+
+  const handleVisibilityChange = (visibility: ScreenVisibility) => async () => {
+    if (!session || !profileInSession) {
+      return;
+    }
+    await updateProfile(session.id, profileInSession.id, {
+      screenVisibility: visibility,
     });
   };
 
@@ -217,7 +244,11 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
         </div>
       ) : null}
       {
-        <div className="a6y-screen-share-controls">
+        <div
+          className={cls({
+            'a6y-screen-share-controls': 1,
+            'host-controls': profile?.role === RoleType.HOST,
+          })}>
           {profileInSession.screenShare ? (
             <button
               className={cls({
@@ -235,6 +266,32 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = ({
               <BiFullscreen size={16} />
             )}
           </button>
+          {profile?.role === RoleType.HOST ? (
+            <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item
+                    onClick={handleVisibilityChange(
+                      ScreenVisibility.ONLY_HOST,
+                    )}>
+                    {SCREEN_VISIBILITY_MAP[ScreenVisibility.ONLY_HOST]}
+                  </Menu.Item>
+                  <Menu.Item
+                    onClick={handleVisibilityChange(ScreenVisibility.ALL)}>
+                    {SCREEN_VISIBILITY_MAP[ScreenVisibility.ALL]}
+                  </Menu.Item>
+                </Menu>
+              }>
+              <button className="a6y-screen-visibility">
+                {
+                  SCREEN_VISIBILITY_MAP[
+                    profileInSession.screenVisibility ??
+                      ScreenVisibility.ONLY_HOST
+                  ]
+                }
+              </button>
+            </Dropdown>
+          ) : null}
         </div>
       }
     </div>

@@ -30,7 +30,10 @@ export const updateProfile = (
   sessionId: string,
   profileId: string,
   params: Partial<
-    Pick<Profile, 'rdcStatus' | 'screenShare' | 'markable'> & {
+    Pick<
+      Profile,
+      'rdcStatus' | 'screenShare' | 'markable' | 'screenVisibility'
+    > & {
       streams: Partial<Stream>[];
     }
   >,

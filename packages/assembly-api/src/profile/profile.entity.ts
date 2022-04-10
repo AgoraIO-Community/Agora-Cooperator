@@ -1,4 +1,9 @@
-import { Profile, RDCStatus, RoleType } from 'assembly-shared';
+import {
+  Profile,
+  RDCStatus,
+  RoleType,
+  ScreenVisibility,
+} from 'assembly-shared';
 import { SessionEntity } from '../session/session.entity';
 import { SignalEntity } from '../signal/signal.entity';
 import { StreamEntity } from '../stream/stream.entity';
@@ -29,6 +34,9 @@ export class ProfileEntity implements Profile {
 
   @Column()
   screenShare: boolean;
+
+  @Column()
+  screenVisibility: ScreenVisibility;
 
   @Column()
   markable: boolean;

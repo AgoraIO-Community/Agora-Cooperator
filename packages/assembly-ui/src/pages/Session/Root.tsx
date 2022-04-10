@@ -18,7 +18,13 @@ import {
   A6yScreenSelectorPurpose,
 } from '../../components';
 import './index.css';
-import { RDCStatus, StreamKind, SignalKind, RoleType } from 'assembly-shared';
+import {
+  RDCStatus,
+  StreamKind,
+  SignalKind,
+  RoleType,
+  ScreenVisibility,
+} from 'assembly-shared';
 import { updateProfile } from '../../services/api';
 import { Commands } from '../../services/Signalling';
 import { useIntl } from 'react-intl';
@@ -139,6 +145,7 @@ export const Root = () => {
       const updateDeviceState = () =>
         updateProfile(session.id, profile.id, {
           screenShare: payload.screenShare,
+          screenVisibility: ScreenVisibility.ONLY_HOST,
           streams: [
             {
               id: payload.streamId,
@@ -382,6 +389,12 @@ export const Root = () => {
                     (p) =>
                       (p.screenShare || p.rdcStatus === RDCStatus.ACTIVE) &&
                       p.id !== profile?.id,
+                  )
+                  .filter(
+                    (p) =>
+                      (profile?.role === RoleType.NORMAL &&
+                        p.screenVisibility === ScreenVisibility.ALL) ||
+                      profile?.role === RoleType.HOST,
                   )
                   .map((p) => (
                     <Tabs.TabPane key={p.id} tab={p.username}>

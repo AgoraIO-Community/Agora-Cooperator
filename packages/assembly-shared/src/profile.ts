@@ -9,12 +9,18 @@ export enum RDCStatus {
   PAUSED = 2,
 }
 
+export enum ScreenVisibility {
+  ALL = 0,
+  ONLY_HOST = 1,
+}
+
 export interface Profile {
   id: string;
   username: string;
   role: RoleType;
   rdcStatus: RDCStatus;
   screenShare: boolean;
+  screenVisibility: ScreenVisibility;
   markable: boolean;
   createdAt: Date;
   expiredAt: Date;

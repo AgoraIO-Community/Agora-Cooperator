@@ -41,7 +41,11 @@ export class ProfileController {
     @Body()
     profile: Pick<
       ProfileEntity,
-      'rdcStatus' | 'markable' | 'screenShare' | 'streams'
+      | 'rdcStatus'
+      | 'markable'
+      | 'screenShare'
+      | 'streams'
+      | 'screenVisibility'
     >,
   ) {
     return await this.profileService.updateProfile(

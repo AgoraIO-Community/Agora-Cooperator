@@ -31,6 +31,8 @@ const messages = {
   'a6y.screen.selector.screenShare.ok': '确认共享',
   'a6y.screen.selector.rdc.ok': '确认授权',
   'a6y.screen.selector.display': '桌面',
+  'ay6.screenShare.screenVisibility.onlyHost': '仅老师可见',
+  'ay6.screenShare.screenVisibility.all': '全班可见',
   'modal.invite.audio.title': '请求打开麦克风',
   'modal.invite.video.title': '请求打开摄像头',
   'modal.invite.screenShare.title': '请求共享屏幕',

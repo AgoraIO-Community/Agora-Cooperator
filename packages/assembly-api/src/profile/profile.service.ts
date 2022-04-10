@@ -1,6 +1,11 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Profile, RDCStatus, SignalCommand } from 'assembly-shared';
+import {
+  Profile,
+  RDCStatus,
+  ScreenVisibility,
+  SignalCommand,
+} from 'assembly-shared';
 import { Repository, MoreThanOrEqual } from 'typeorm';
 import { ProfileEntity } from './profile.entity';
 import { StreamKind, SignalKind } from 'assembly-shared';
@@ -58,6 +63,7 @@ export class ProfileService {
       rdcStatus: RDCStatus.IDLE,
       screenShare: false,
       markable: false,
+      screenVisibility: ScreenVisibility.ONLY_HOST,
       createdAt: new Date(),
       lastSeen: new Date(),
       expiredAt: session.expiredAt,
@@ -89,9 +95,10 @@ export class ProfileService {
       screenShare,
       markable,
       streams,
+      screenVisibility,
     }: Pick<
       ProfileEntity,
-      'rdcStatus' | 'screenShare' | 'markable' | 'streams'
+      'rdcStatus' | 'screenShare' | 'markable' | 'streams' | 'screenVisibility'
     >,
   ): Promise<ProfileEntity> {
     const profileEntity = await this.findProfile(profileId);
@@ -100,6 +107,9 @@ export class ProfileService {
     }
     if (typeof screenShare !== 'undefined') {
       profileEntity.screenShare = screenShare;
+    }
+    if (typeof screenVisibility !== 'undefined') {
+      profileEntity.screenVisibility = screenVisibility;
     }
     if (typeof markable !== 'undefined') {
       profileEntity.markable = markable;
