@@ -19,7 +19,7 @@ import {
 import { A6yFastBoard } from '../a6y-fast-board';
 import { updateProfile } from '../../services/api';
 import './index.css';
-import { Button, Dropdown, Menu, Select } from 'antd';
+import { Dropdown, Menu } from 'antd';
 import { useIntl } from 'react-intl';
 
 const WORK_AREA_HEIGHT_MAPS: { [k: string]: number } = {
@@ -32,7 +32,6 @@ export interface A6yScreenShareProps {
 export const A6yScreenShare: FC<A6yScreenShareProps> = ({
   profileInSession,
 }) => {
-  // eslint-disable-next-line
   const [[height, width], setSize] = useState([0, 0]);
   const [[fbHeight, fbWidth], setFbSize] = useState([0, 0]);
   const attachElRef = useRef<HTMLDivElement>(null);
