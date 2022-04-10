@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Checkbox, Modal } from 'antd';
+import { Checkbox, Modal, Select } from 'antd';
 import { useIntl } from 'react-intl';
 import cls from 'classnames';
 import { useEngines } from '../../hooks';
@@ -12,7 +12,11 @@ export interface A6yScreenSelectorProps {
   title?: string;
   purpose?: A6yScreenSelectorPurpose;
   visible: boolean;
-  onOk: (displayId: any, withAudio: boolean) => Promise<void>;
+  onOk: (
+    displayId: any,
+    resolution: [number, number],
+    withAudio: boolean,
+  ) => Promise<void>;
   onCancel: () => Promise<void>;
 }
 
@@ -29,6 +33,7 @@ export const A6yScreenSelector: FC<A6yScreenSelectorProps> = ({
   const [withAudio, setWithAudio] = useState(false);
   const [displays, setDisplays] = useState<any[]>([]);
   // const [windows, setWindows] = useState<any[]>([]);
+  const [resolution, setResolution] = useState<[number, number]>([1280, 720]);
 
   useEffect(() => {
     if (rtcEngine && purpose === 'screenShare') {
@@ -59,7 +64,7 @@ export const A6yScreenSelector: FC<A6yScreenSelectorProps> = ({
   }, [purpose, visible, rtcEngine, rdcEngine]);
 
   const handleOk = async () => {
-    await onOk(displayId, withAudio);
+    await onOk(displayId, resolution, withAudio);
   };
   return (
     <Modal
@@ -83,6 +88,21 @@ export const A6yScreenSelector: FC<A6yScreenSelectorProps> = ({
           </Checkbox>
         </div>
       ) : null}
+      <div className="a6y-screen-screen-options">
+        <label style={{ paddingRight: 8 }}>
+          {intl.formatMessage({ id: 'a6y.screen.selector.resolution' })}:
+        </label>
+        <Select
+          style={{ width: 120 }}
+          value={`${resolution[0]}x${resolution[1]}`}
+          onChange={(value) => {
+            const [width, height] = value.split('x').map(Number);
+            setResolution([width, height]);
+          }}>
+          <Select.Option value={'1920x1080'}>1920x1080</Select.Option>
+          <Select.Option value={'1280x720'}>1280x720</Select.Option>
+        </Select>
+      </div>
       <div className="a6y-displays">
         {displays.map((display, index) => (
           <div

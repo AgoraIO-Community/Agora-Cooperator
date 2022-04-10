@@ -32,6 +32,11 @@ import { RDCRoleType } from 'agora-rdc-electron';
 import { ipcRenderer, remote } from 'electron';
 import { BiStopCircle } from 'react-icons/bi';
 
+const BITRATES: { [key: string]: number } = {
+  '1280x720': 1000,
+  '1920x1080': 2000,
+};
+
 export const Root = () => {
   useCheckInOut();
   const profilesInSession = useProfilesInSession();
@@ -39,7 +44,7 @@ export const Root = () => {
   const { profile } = useProfile();
   const { signalling } = useSignalling();
   const intl = useIntl();
-  const { setDisplayId, rdcEngine } = useEngines();
+  const { setDisplayId, setDisplayConfig, rdcEngine } = useEngines();
   const [screenSelectorVisible, setScreenSelectorVisible] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState<string>();
   const [screenSelectorPurpose, setScreenSelectorPurpose] =
@@ -58,18 +63,29 @@ export const Root = () => {
     setScreenSelectorVisible(true);
   };
 
-  const handleScreenSelectorOk = async (displayId: any, withAudio: boolean) => {
+  const handleScreenSelectorOk = async (
+    displayId: any,
+    [width, height]: [number, number],
+    withAudio: boolean,
+  ) => {
     if (
       !screenStream ||
       !cameraStream ||
       !profile ||
       !session ||
-      !setDisplayId
+      !setDisplayId ||
+      !setDisplayConfig
     ) {
       return;
     }
     if (screenSelectorPurpose === 'screenShare') {
       setDisplayId(displayId);
+      setDisplayConfig({
+        height,
+        width,
+        bitrate: BITRATES[`${width}x${height}`],
+        frameRate: 15,
+      });
       const streams = [{ id: screenStream.id, video: true, audio: withAudio }];
       if (withAudio && !cameraStream.audio) {
         streams.push({
@@ -99,7 +115,11 @@ export const Root = () => {
       rdcStatus: RDCStatus.ACTIVE,
       streams: [{ id: screenStream.id, video: true, audio: withAudio }],
     });
-    rdcEngine.authorizeControl(signal.uid, displayId);
+    rdcEngine.authorizeControl(signal.uid, displayId, {
+      height,
+      width,
+      bitrate: BITRATES[`${width}x${height}`],
+    });
     setScreenSelectorVisible(false);
     message.warn({
       content: (
