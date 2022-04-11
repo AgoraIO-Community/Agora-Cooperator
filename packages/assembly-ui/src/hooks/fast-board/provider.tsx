@@ -18,12 +18,13 @@ export const FastBoardProvider: FC = ({ children }) => {
     createFastboard({
       sdkConfig: {
         appIdentifier,
-        region: 'cn-hz', // "cn-hz" | "us-sv" | "sg" | "in-mum" | "gb-lon"
+        region: 'cn-hz', // "cn-hz" | "us-sv" | "sg" | "in-mum" | "gb-lon",
       },
       joinRoom: {
         uid: profile.username,
         uuid: uuid,
         roomToken: token,
+        hotKeys: {}
       },
     })
       .then((app) => {
