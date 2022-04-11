@@ -5,25 +5,47 @@ import { ipcRenderer } from 'electron';
 export const useIgnoreMouseEvent = () => {
   const { profile } = useProfile();
   const onMouseEnter = useCallback(() => {
-    if (!profile?.screenShare) {
+    if (!profile?.screenShare || profile.markable) {
       return;
     }
-    ipcRenderer.send('set-ignore-mouse-events', false);
+    ipcRenderer.send(
+      'set-ignore-mouse-events',
+      false,
+      { forward: false },
+      { source: 'onMouseEnter' },
+    );
   }, [profile]);
 
   const onMouseLeave = useCallback(() => {
-    if (!profile?.screenShare || profile?.markable) {
+    if (!profile?.screenShare || profile.markable) {
       return;
     }
-    ipcRenderer.send('set-ignore-mouse-events', true, { forward: true });
+    ipcRenderer.send(
+      'set-ignore-mouse-events',
+      true,
+      { forward: true },
+      { source: 'onMouseLeave' },
+    );
   }, [profile]);
 
   useEffect(() => {
-    if (profile?.markable) {
-      ipcRenderer.send('set-ignore-mouse-events', false);
+    if (!profile?.screenShare) {
+      return;
     }
-    if (profile?.screenShare && !profile.markable) {
-      ipcRenderer.send('set-ignore-mouse-events', true, { forward: true });
+    if (profile?.markable) {
+      ipcRenderer.send(
+        'set-ignore-mouse-events',
+        false,
+        { forward: false },
+        { source: 'useEffect' },
+      );
+    } else {
+      ipcRenderer.send(
+        'set-ignore-mouse-events',
+        true,
+        { forward: true },
+        { source: 'useEffect' },
+      );
     }
   }, [profile]);
 

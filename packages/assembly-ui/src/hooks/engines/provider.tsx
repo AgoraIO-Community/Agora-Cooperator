@@ -152,6 +152,7 @@ export const EnginesProvider: FC = ({ children }) => {
     }
     const { appId, token, uid, video, audio } = screenStream;
     if (
+      profile.screenShare &&
       video &&
       displayId &&
       externalStatus === ExternalStatus.OCCUPIED_BY_RDC &&
@@ -169,7 +170,11 @@ export const EnginesProvider: FC = ({ children }) => {
       titleBar.setVisible(false);
       ipcRenderer.invoke('screenShareStarted');
     }
-    if (!video && externalStatus === ExternalStatus.OCCUPIED_BY_SCREEN_SHARE) {
+    if (
+      !profile.screenShare &&
+      !video &&
+      externalStatus === ExternalStatus.OCCUPIED_BY_SCREEN_SHARE
+    ) {
       rtcEngine.unpublishFSS();
       rtcEngine.leaveFSSChannel();
       rtcEngine.releaseFSSRtcEngine();
