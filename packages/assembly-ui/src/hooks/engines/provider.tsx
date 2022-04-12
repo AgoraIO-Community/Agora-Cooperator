@@ -106,6 +106,7 @@ export const EnginesProvider: FC = ({ children }) => {
   useEffect(() => {
     if (
       !rtcEngine ||
+      !!rdcEngine ||
       !session ||
       !profile ||
       externalStatus !== ExternalStatus.IDLE_FOR_RDC
@@ -125,10 +126,12 @@ export const EnginesProvider: FC = ({ children }) => {
     });
     const { uid: userId, token } = signal;
     const { uid: streamId, token: streamToken } = screenStream;
-    instance.join(userId, token, session.channel, streamId, streamToken);
+    instance
+      .join(userId, token, session.channel, streamId, streamToken)
+      .catch(console.error);
     setRdcEngine(instance);
     setExternalStatus(ExternalStatus.OCCUPIED_BY_RDC);
-  }, [profile, session, rtcEngine, externalStatus]);
+  }, [profile, session, rtcEngine, rdcEngine, externalStatus]);
 
   // handle camera stream publish or unpublish
   useEffect(() => {
@@ -159,28 +162,41 @@ export const EnginesProvider: FC = ({ children }) => {
       rdcEngine
     ) {
       const channel = session?.channel;
-      rtcEngine.unpublishFSS();
-      rtcEngine.leaveFSSChannel();
-      rdcEngine.dispose();
-      setRdcEngine(undefined);
-      setExternalStatus(ExternalStatus.OCCUPIED_BY_SCREEN_SHARE);
-      rtcEngine.initializeFSSRtcEngine(appId);
-      rtcEngine.joinFSSChannel(token, uid, channel);
-      rtcEngine.publishFSS(displayId, displayConfig, audio);
-      titleBar.setVisible(false);
-      ipcRenderer.invoke('screenShareStarted');
+      (async () => {
+        try {
+          await rtcEngine.unpublishFSS();
+          await rtcEngine.leaveFSSChannel();
+          await rdcEngine.dispose();
+          setRdcEngine(undefined);
+          await rtcEngine.initializeFSSRtcEngine(appId);
+          await rtcEngine.joinFSSChannel(token, uid, channel);
+          await rtcEngine.publishFSS(displayId, displayConfig, audio);
+          await ipcRenderer.invoke('screenShareStarted');
+          titleBar.setVisible(false);
+          setExternalStatus(ExternalStatus.OCCUPIED_BY_SCREEN_SHARE);
+        } catch (error) {
+          console.log(error);
+        }
+      })();
     }
     if (
       !profile.screenShare &&
       !video &&
+      !rdcEngine &&
       externalStatus === ExternalStatus.OCCUPIED_BY_SCREEN_SHARE
     ) {
-      rtcEngine.unpublishFSS();
-      rtcEngine.leaveFSSChannel();
-      rtcEngine.releaseFSSRtcEngine();
-      setExternalStatus(ExternalStatus.IDLE_FOR_RDC);
-      titleBar.setVisible(true);
-      ipcRenderer.invoke('screenShareStopped');
+      (async () => {
+        try {
+          await ipcRenderer.invoke('screenShareStopped');
+          await rtcEngine.unpublishFSS();
+          await rtcEngine.leaveFSSChannel();
+          await rtcEngine.releaseFSSRtcEngine();
+          setExternalStatus(ExternalStatus.IDLE_FOR_RDC);
+          titleBar.setVisible(true);
+        } catch (error) {
+          console.error(error);
+        }
+      })();
     }
   }, [
     rtcEngine,

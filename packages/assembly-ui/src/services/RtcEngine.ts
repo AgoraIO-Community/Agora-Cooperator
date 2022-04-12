@@ -137,23 +137,41 @@ export class RtcEngine extends EventEmitter {
   }
 
   public async joinFSSChannel(token: string, uid: number, channel: string) {
-    const code = this.instance.videoSourceJoin(token, channel, '', uid);
-    if (code !== 0) {
-      throw new Error(
-        `Failed to join channel for screen share with error code: ${code}`,
-      );
-    }
-    return code;
+    let code = -1;
+    return new Promise((resolve, reject) => {
+      this.instance.once('videosourcejoinedsuccess', (_uid: number) => {
+        if (code === 0 && _uid === uid) {
+          resolve(code);
+          console.log('videoSourceJoinedSuccess');
+          return;
+        }
+        reject(
+          new Error(
+            `Failed to join channel for screen share with error code: ${code}`,
+          ),
+        );
+      });
+      code = this.instance.videoSourceJoin(token, channel, '', uid);
+    });
   }
 
   public async leaveFSSChannel() {
-    const code = this.instance.videoSourceLeave();
-    if (code !== 0) {
-      throw new Error(
-        `Failed to leave channel for screen share with error code: ${code}`,
-      );
-    }
-    return code;
+    let code = -1;
+    return new Promise((resolve, reject) => {
+      this.instance.once('videoSourceLeaveChannel', () => {
+        if (code === 0) {
+          resolve(code);
+          console.log('videoSourceLeaveChannel');
+          return;
+        }
+        reject(
+          new Error(
+            `Failed to leave channel for screen share with error code: ${code}`,
+          ),
+        );
+      });
+      code = this.instance.videoSourceLeave();
+    });
   }
 
   public getFSSDisplays() {

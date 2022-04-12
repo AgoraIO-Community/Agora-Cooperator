@@ -44,7 +44,7 @@ export const Root = () => {
   const { profile } = useProfile();
   const { signalling } = useSignalling();
   const intl = useIntl();
-  const { setDisplayId, setDisplayConfig, rdcEngine } = useEngines();
+  const { setDisplayId, setDisplayConfig, rdcEngine, rtcEngine } = useEngines();
   const [screenSelectorVisible, setScreenSelectorVisible] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState<string>();
   const [screenSelectorPurpose, setScreenSelectorPurpose] =
@@ -331,14 +331,15 @@ export const Root = () => {
       const signal = controlledBy?.signals.find(
         (s) => s.kind === SignalKind.RDC,
       );
-      if (!rdcEngine || !signal) {
+      if (!rdcEngine || !signal || !rtcEngine) {
         return;
       }
+      rtcEngine.unpublishFSS();
       rdcEngine.quitControl(signal.uid, RDCRoleType.CONTROLLED);
       message.destroy(controlledBy?.id);
       setControlledBy(undefined);
     },
-    [rdcEngine, controlledBy, setControlledBy],
+    [rdcEngine, rtcEngine, controlledBy, setControlledBy],
   );
 
   const handleStopControl = useCallback(async () => {
