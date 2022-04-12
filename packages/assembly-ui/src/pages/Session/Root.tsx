@@ -197,6 +197,7 @@ export const Root = () => {
         });
       Modal.destroyAll();
       if (
+        process.platform === 'darwin' &&
         (payload.audio || payload.screenShare || payload.video) &&
         !remote.getCurrentWindow().isVisibleOnAllWorkspaces()
       ) {
@@ -295,7 +296,10 @@ export const Root = () => {
           .replace('{username}', profile.username),
       );
       setScreenSelectorVisible(true);
-      if (!remote.getCurrentWindow().isVisibleOnAllWorkspaces()) {
+      if (
+        process.platform === 'darwin' &&
+        !remote.getCurrentWindow().isVisibleOnAllWorkspaces()
+      ) {
         console.log('visible on all workspaces');
         remote.getCurrentWindow().show();
       }
