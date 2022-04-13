@@ -11,13 +11,16 @@ const __DEV__ = process.env.NODE_ENV === 'development';
 
 const killVSChildProcess = async () => {
   if(process.platform !== 'win32') {
+    console.log('return is not win32 platform');
     return;
   }
   const childrenProcess = await psTree(process.pid);
+  console.log('all child process', JSON.stringify(childrenProcess));
   const videoSourceProcess = childrenProcess.find((ps) =>
     ps.COMMAND.includes('VideoSource'),
   );
   if (!videoSourceProcess) {
+    console.log('return process is not found');
     return;
   }
   await kill(videoSourceProcess.PID);
