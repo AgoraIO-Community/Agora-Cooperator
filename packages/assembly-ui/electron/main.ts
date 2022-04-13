@@ -3,6 +3,7 @@ import process from 'process';
 import ps from 'ps-node';
 import utils from 'util';
 import psTreeCBify from 'ps-tree';
+import logger from 'electron-log';
 
 const psTree = utils.promisify(psTreeCBify);
 const kill = utils.promisify(ps.kill);
@@ -10,21 +11,21 @@ const kill = utils.promisify(ps.kill);
 const __DEV__ = process.env.NODE_ENV === 'development';
 
 const killVSChildProcess = async () => {
-  if(process.platform !== 'win32') {
-    console.log('return is not win32 platform');
+  if (process.platform !== 'win32') {
+    logger.info('return is not win32 platform');
     return;
   }
   const childrenProcess = await psTree(process.pid);
-  console.log('all child process', JSON.stringify(childrenProcess));
+  logger.info('all child process', JSON.stringify(childrenProcess));
   const videoSourceProcess = childrenProcess.find((ps) =>
     ps.COMMAND.includes('VideoSource'),
   );
   if (!videoSourceProcess) {
-    console.log('return process is not found');
+    logger.info('return process is not found');
     return;
   }
   await kill(videoSourceProcess.PID);
-  console.log('-> kill', JSON.stringify(videoSourceProcess));
+  logger.info('-> kill', JSON.stringify(videoSourceProcess));
 };
 
 const toggleFocusMode = (mainWindow: BrowserWindow, enabled: boolean) => {
@@ -74,7 +75,7 @@ function registerIpcListeners(mainWindow: BrowserWindow) {
   ipcMain.on(
     'set-ignore-mouse-events',
     (event, ...args: [ignore: boolean, opts: { forward: boolean }]) => {
-      console.log('->', args);
+      logger.info('->', args);
       BrowserWindow.fromWebContents(event.sender)?.setIgnoreMouseEvents(
         ...args,
       );
