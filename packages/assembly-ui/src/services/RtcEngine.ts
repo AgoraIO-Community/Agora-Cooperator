@@ -4,7 +4,7 @@ import EventEmitter from 'eventemitter3';
 
 const LOGS_FOLDER = isMacOS()
   ? `${window.process.env.HOME}/Library/Logs/RDCClient`
-  : '.';
+  : './log';
 
 export const DEFAULT_RECT = { x: 0, y: 0, height: 0, width: 0 };
 
