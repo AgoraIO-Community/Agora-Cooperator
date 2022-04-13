@@ -1,5 +1,25 @@
 import { app, BrowserWindow, ipcMain, screen } from 'electron';
+import process from 'process';
+import ps from 'ps-node';
+import utils from 'util';
+import psTreeCBify from 'ps-tree';
+
+const psTree = utils.promisify(psTreeCBify);
+const kill = utils.promisify(ps.kill);
+
 const __DEV__ = process.env.NODE_ENV === 'development';
+
+const killVSChildProcess = async () => {
+  const childrenProcess = await psTree(process.pid);
+  const videoSourceProcess = childrenProcess.find((ps) =>
+    ps.COMMAND.includes('VideoSource'),
+  );
+  if (!videoSourceProcess) {
+    return;
+  }
+  await kill(videoSourceProcess.PID);
+  console.log('-> kill', JSON.stringify(videoSourceProcess));
+};
 
 const toggleFocusMode = (mainWindow: BrowserWindow, enabled: boolean) => {
   if (enabled) {
@@ -40,9 +60,15 @@ function registerIpcListeners(mainWindow: BrowserWindow) {
   ipcMain.handle('screenShareStopped', async () => {
     toggleFocusMode(mainWindow, false);
   });
+
+  ipcMain.handle('killVSChildProcess', async () => {
+    return await killVSChildProcess();
+  });
+
   ipcMain.on(
     'set-ignore-mouse-events',
     (event, ...args: [ignore: boolean, opts: { forward: boolean }]) => {
+      console.log('->', args);
       BrowserWindow.fromWebContents(event.sender)?.setIgnoreMouseEvents(
         ...args,
       );
@@ -85,7 +111,8 @@ const createWindow = async () => {
 };
 app.whenReady().then(createWindow);
 app.allowRendererProcessReuse = false;
-app.on('window-all-closed', () => {
+app.on('window-all-closed', async () => {
+  await killVSChildProcess();
   app.quit();
 });
 

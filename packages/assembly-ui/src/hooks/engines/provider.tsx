@@ -191,6 +191,7 @@ export const EnginesProvider: FC = ({ children }) => {
           await rtcEngine.unpublishFSS();
           await rtcEngine.leaveFSSChannel();
           await rtcEngine.releaseFSSRtcEngine();
+          await ipcRenderer.invoke('killVSChildProcess');
           setExternalStatus(ExternalStatus.IDLE_FOR_RDC);
           titleBar.setVisible(true);
         } catch (error) {
