@@ -6,6 +6,7 @@ import psTreeCBify from 'ps-tree';
 import logger from 'electron-log';
 
 const psTree = utils.promisify(psTreeCBify);
+const lookup = utils.promisify(ps.lookup);
 const kill = utils.promisify(ps.kill);
 
 const __DEV__ = process.env.NODE_ENV === 'development';
@@ -17,15 +18,38 @@ const killVSChildProcess = async () => {
   }
   const childrenProcess = await psTree(process.pid);
   logger.info('all child process', JSON.stringify(childrenProcess));
-  const videoSourceProcess = childrenProcess.find((ps) =>
-    ps.COMMAND.includes('VideoSource'),
-  );
-  if (!videoSourceProcess) {
-    logger.info('return process is not found');
+  const videoSourceProcess = childrenProcess.find((ps) => {
+      return ps.COMMAND.includes('VideoSource');
+  });
+  if (videoSourceProcess) {
+    logger.info(
+      'found video source process by ps tree',
+      JSON.stringify(videoSourceProcess),
+    );
+    try {
+      await kill(videoSourceProcess.PID);
+    } catch (error) {
+      logger.error('kill video source process error', error);
+    }
+    logger.info('-> kill', JSON.stringify(videoSourceProcess));
+    return;
+  } else {
+    logger.info('-> no video source process found by ps tree');
+  }
+  const videoSourceProcessByLookup = await lookup({ command: 'VideoSource' });
+  if (videoSourceProcessByLookup.length > 0) {
+    logger.info(
+      'found video source process by lookup',
+      JSON.stringify(videoSourceProcessByLookup),
+    );
+    try {
+      await Promise.all(videoSourceProcessByLookup.map((ps) => kill(ps.pid)));
+    } catch (error) {
+      logger.error('kill video source process error', error);
+    }
+    logger.info('-> kill all', JSON.stringify(videoSourceProcessByLookup));
     return;
   }
-  await kill(videoSourceProcess.PID);
-  logger.info('-> kill', JSON.stringify(videoSourceProcess));
 };
 
 const toggleFocusMode = (mainWindow: BrowserWindow, enabled: boolean) => {
