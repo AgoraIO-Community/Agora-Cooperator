@@ -10,6 +10,9 @@ const kill = utils.promisify(ps.kill);
 const __DEV__ = process.env.NODE_ENV === 'development';
 
 const killVSChildProcess = async () => {
+  if(process.platform !== 'win32') {
+    return;
+  }
   const childrenProcess = await psTree(process.pid);
   const videoSourceProcess = childrenProcess.find((ps) =>
     ps.COMMAND.includes('VideoSource'),
