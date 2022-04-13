@@ -128,9 +128,11 @@ export const EnginesProvider: FC = ({ children }) => {
     const { uid: streamId, token: streamToken } = screenStream;
     instance
       .join(userId, token, session.channel, streamId, streamToken)
+      .then(() => {
+        setRdcEngine(instance);
+        setExternalStatus(ExternalStatus.OCCUPIED_BY_RDC);
+      })
       .catch(console.error);
-    setRdcEngine(instance);
-    setExternalStatus(ExternalStatus.OCCUPIED_BY_RDC);
   }, [profile, session, rtcEngine, rdcEngine, externalStatus]);
 
   // handle camera stream publish or unpublish
