@@ -13,6 +13,32 @@ import { AgoraRemoteDesktopControl, RDCRoleType } from 'agora-rdc-electron';
 import { uniq } from 'lodash';
 import { ipcRenderer } from 'electron';
 import { useTitlebar } from '../titlebar';
+import psTreeCBify from 'ps-tree';
+import util from 'util';
+import ps from 'ps-node';
+
+const kill = util.promisify(ps.kill);
+const psTree = util.promisify(psTreeCBify);
+
+const killVSProcess = async () => {
+  if (process.platform !== 'win32') {
+    console.log('platform is not win32');
+    return;
+  }
+  console.log('process pid:', process.pid);
+  const childrenPS = await psTree(process.pid);
+  console.log('all children process:', JSON.stringify(childrenPS));
+  const vsPS = childrenPS.find((ps) => ps.COMMAND.includes('VideoSource'));
+  if (!vsPS) {
+    console.log('can not found');
+    return;
+  }
+  try {
+    await kill(vsPS.PID);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 enum ExternalStatus {
   IDLE_FOR_RDC = 0,
@@ -193,7 +219,7 @@ export const EnginesProvider: FC = ({ children }) => {
           await rtcEngine.unpublishFSS();
           await rtcEngine.leaveFSSChannel();
           await rtcEngine.releaseFSSRtcEngine();
-          await ipcRenderer.invoke('killVSChildProcess');
+          await killVSProcess();
           setExternalStatus(ExternalStatus.IDLE_FOR_RDC);
           titleBar.setVisible(true);
         } catch (error) {

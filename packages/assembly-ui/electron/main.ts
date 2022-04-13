@@ -1,56 +1,7 @@
-import { app, BrowserWindow, ipcMain, screen } from 'electron';
-import process from 'process';
-import ps from 'ps-node';
-import utils from 'util';
-import psTreeCBify from 'ps-tree';
+import { app, BrowserWindow, ipcMain, screen, remote, } from 'electron';
 import logger from 'electron-log';
 
-const psTree = utils.promisify(psTreeCBify);
-const lookup = utils.promisify(ps.lookup);
-const kill = utils.promisify(ps.kill);
-
 const __DEV__ = process.env.NODE_ENV === 'development';
-
-const killVSChildProcess = async () => {
-  if (process.platform !== 'win32') {
-    logger.info('return is not win32 platform');
-    return;
-  }
-  const childrenProcess = await psTree(process.pid);
-  logger.info('all child process', JSON.stringify(childrenProcess));
-  const videoSourceProcess = childrenProcess.find((ps) => {
-      return ps.COMMAND.includes('VideoSource');
-  });
-  if (videoSourceProcess) {
-    logger.info(
-      'found video source process by ps tree',
-      JSON.stringify(videoSourceProcess),
-    );
-    try {
-      await kill(videoSourceProcess.PID);
-    } catch (error) {
-      logger.error('kill video source process error', error);
-    }
-    logger.info('-> kill', JSON.stringify(videoSourceProcess));
-    return;
-  } else {
-    logger.info('-> no video source process found by ps tree');
-  }
-  const videoSourceProcessByLookup = await lookup({ command: 'VideoSource' });
-  if (videoSourceProcessByLookup.length > 0) {
-    logger.info(
-      'found video source process by lookup',
-      JSON.stringify(videoSourceProcessByLookup),
-    );
-    try {
-      await Promise.all(videoSourceProcessByLookup.map((ps) => kill(ps.pid)));
-    } catch (error) {
-      logger.error('kill video source process error', error);
-    }
-    logger.info('-> kill all', JSON.stringify(videoSourceProcessByLookup));
-    return;
-  }
-};
 
 const toggleFocusMode = (mainWindow: BrowserWindow, enabled: boolean) => {
   if (enabled) {
@@ -90,10 +41,6 @@ function registerIpcListeners(mainWindow: BrowserWindow) {
 
   ipcMain.handle('screenShareStopped', async () => {
     toggleFocusMode(mainWindow, false);
-  });
-
-  ipcMain.handle('killVSChildProcess', async () => {
-    return await killVSChildProcess();
   });
 
   ipcMain.on(
@@ -143,7 +90,6 @@ const createWindow = async () => {
 app.whenReady().then(createWindow);
 app.allowRendererProcessReuse = false;
 app.on('window-all-closed', async () => {
-  await killVSChildProcess();
   app.quit();
 });
 

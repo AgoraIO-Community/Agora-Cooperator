@@ -22,7 +22,10 @@ module.exports = override(
     {
       'agora-rdc-core': 'commonjs2 agora-rdc-core',
       'agora-electron-sdk': 'commonjs2 agora-electron-sdk',
-      electron: 'commonjs2 electron',
+      'electron': 'commonjs2 electron',
+      'util': 'commonjs2 util',
+      'ps-tree': 'commonjs2 ps-tree',
+      'ps-node': 'commonjs2 ps-node',
     },
   ]),
   addWebpackPlugin(
