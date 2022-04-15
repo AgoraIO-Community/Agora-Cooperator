@@ -11,7 +11,7 @@
     "clean": "rimraf ./build ./dist"
   },
   "dependencies": {
-    "@netless/fastboard-react": "0.3.2-canary.5",
+    "@netless/fastboard-react": "0.3.2-canary.6",
     "@netless/window-manager": "^0.4.18",
     "agora-electron-sdk": "3.6.1-rc.1-build.122",
     "agora-rdc-electron": "^1.0.0",
