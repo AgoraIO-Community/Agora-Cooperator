@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { useIntl } from 'react-intl';
 import dayjs from 'dayjs';
 import { BiDownArrowAlt, BiUpArrowAlt, BiPencil } from 'react-icons/bi';
@@ -14,7 +14,11 @@ import './index.css';
 import { NetworkIndicator } from './NetworkIndicator';
 import { updateProfile } from '../../services/api';
 
-export const A6yHeader = () => {
+export interface A6yHeaderProps {
+  hasMarkable?: boolean;
+}
+
+export const A6yHeader: FC<A6yHeaderProps> = ({ hasMarkable }) => {
   const session = useSession();
   const { profile, refetchProfile } = useProfile();
   const intl = useIntl();
@@ -58,7 +62,8 @@ export const A6yHeader = () => {
           'a6y-markable': 1,
           [`enabled`]: profile?.markable,
         })}
-        onClick={toggleMarkable}>
+        onClick={toggleMarkable}
+        disabled={hasMarkable && !profile?.markable}>
         <BiPencil size={16} />
       </button>
     </div>

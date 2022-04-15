@@ -17,12 +17,6 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
   ({ markable, style }) => {
     const { language } = navigator;
     const fastBoard = useFastBoard();
-    useEffect(() => {
-      if (!fastBoard || !markable) {
-        return;
-      }
-      fastBoard.cleanCurrentScene();
-    }, [fastBoard, markable]);
     console.log('whiteboard', markable, fastBoard);
     return markable ? (
       <div style={style} className="a6y-fastboard-wrap">

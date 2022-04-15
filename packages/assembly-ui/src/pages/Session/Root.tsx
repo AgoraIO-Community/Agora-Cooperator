@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Layout, message, Modal, Tabs } from 'antd';
 import {
   useCheckInOut,
@@ -8,6 +8,7 @@ import {
   useSession,
   useSignalling,
   ProfileInSession,
+  useFastBoard,
 } from '../../hooks';
 import {
   A6yStream,
@@ -45,6 +46,7 @@ export const Root = () => {
   const { signalling } = useSignalling();
   const intl = useIntl();
   const { setDisplayId, setDisplayConfig, rdcEngine, rtcEngine } = useEngines();
+  const fastBoard = useFastBoard();
   const [screenSelectorVisible, setScreenSelectorVisible] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState<string>();
   const [screenSelectorPurpose, setScreenSelectorPurpose] =
@@ -56,6 +58,10 @@ export const Root = () => {
   );
   const cameraStream = profile?.streams.find(
     (s) => s.kind === StreamKind.CAMERA,
+  );
+  const hasMarkable = useMemo(
+    () => !!profilesInSession.find((p) => p.markable),
+    [profilesInSession],
   );
 
   const handleStartScreenShare = () => {
@@ -432,6 +438,20 @@ export const Root = () => {
     };
   }, [handleScreenLocked]);
 
+  useEffect(() => {
+    if (!profile || !profile.markable || !fastBoard) {
+      return;
+    }
+
+    const { displayer, room } = fastBoard.manager;
+    const allScenes = displayer.entireScenes();
+    const currentScenes = allScenes[`/{${profile.id}}`];
+    if (!currentScenes) {
+      room.putScenes(`/${profile.id}`, []);
+    }
+    displayer.state.sceneState.scenePath = `/${profile.id}`;
+  }, [profile, fastBoard]);
+
   return (
     <>
       <Layout
@@ -464,7 +484,10 @@ export const Root = () => {
                   )
                   .map((p) => (
                     <Tabs.TabPane key={p.id} tab={p.username}>
-                      <A6yScreenShare profileInSession={p} />
+                      <A6yScreenShare
+                        profileInSession={p}
+                        hasMarkable={hasMarkable}
+                      />
                     </Tabs.TabPane>
                   ))}
               </Tabs>
