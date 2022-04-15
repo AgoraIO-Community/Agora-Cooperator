@@ -1,8 +1,6 @@
-import React, { FC, useEffect, memo, useState } from 'react';
+import React, { FC, useEffect, memo } from 'react';
 import { useFastboard, Fastboard } from '@netless/fastboard-react';
-import { useUnmount } from 'react-use';
 import './index.css';
-import { useProfile } from '../../hooks';
 import { ProfileEntity } from '../../services/api';
 
 const LANGUAGES: { [key: string]: 'en' | 'zh-CN' } = {
