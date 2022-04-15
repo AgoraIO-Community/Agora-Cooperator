@@ -38,7 +38,7 @@ export class ProfileEntity implements Profile {
   @Column()
   screenVisibility: ScreenVisibility;
 
-  @Column()
+  @Column({type: 'float'})
   aspectRatio: number;
 
   @Column()
