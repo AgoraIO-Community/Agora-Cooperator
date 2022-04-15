@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Layout, message, Modal, Tabs } from 'antd';
+import { Collapse, Layout, message, Modal, Tabs } from 'antd';
 import {
   useCheckInOut,
   useProfile,
@@ -9,6 +9,7 @@ import {
   useSignalling,
   ProfileInSession,
   useFastBoard,
+  useIgnoreMouseEvent,
 } from '../../hooks';
 import {
   A6yStream,
@@ -45,6 +46,7 @@ export const Root = () => {
   const { profile } = useProfile();
   const { signalling } = useSignalling();
   const intl = useIntl();
+  const ignoreMouseEvent = useIgnoreMouseEvent();
   const { setDisplayId, setDisplayConfig, rdcEngine, rtcEngine } = useEngines();
   const fastBoard = useFastBoard();
   const [screenSelectorVisible, setScreenSelectorVisible] = useState(false);
@@ -67,6 +69,18 @@ export const Root = () => {
   const handleStartScreenShare = () => {
     setScreenSelectorPurpose('screenShare');
     setScreenSelectorVisible(true);
+  };
+
+  const handleStopScreenShare = () => {
+    if (!session || !profile || !screenStream) {
+      return;
+    }
+    updateProfile(session.id, profile.id, {
+      screenShare: false,
+      markable: false,
+      screenVisibility: ScreenVisibility.ONLY_HOST,
+      streams: [{ id: screenStream.id, video: false, audio: false }],
+    });
   };
 
   const handleScreenSelectorOk = async (
@@ -461,7 +475,7 @@ export const Root = () => {
           marginTop: process.platform === 'darwin' ? 32 : 28,
         }}>
         <Layout.Header>
-          <A6yHeader />
+          <A6yHeader onStopScreenShare={handleStopScreenShare} />
         </Layout.Header>
         <Layout>
           <Layout.Content>
@@ -496,13 +510,31 @@ export const Root = () => {
           <Layout.Sider
             width={216}
             style={{ backgroundColor: 'transparent', overflowY: 'auto' }}>
-            {profilesInSession.map((profile) => (
-              <A6yStream
-                key={profile.id}
-                profileInSession={profile}
-                onStartScreenShare={handleStartScreenShare}
-              />
-            ))}
+            <>
+              {profile?.screenShare ? (
+                <div className="a6y-streams" {...ignoreMouseEvent}>
+                  <Collapse bordered={false} defaultActiveKey="streams">
+                    <Collapse.Panel key="streams" header={null}>
+                      {profilesInSession.map((profile) => (
+                        <A6yStream
+                          key={profile.id}
+                          profileInSession={profile}
+                          onStartScreenShare={handleStartScreenShare}
+                        />
+                      ))}
+                    </Collapse.Panel>
+                  </Collapse>
+                </div>
+              ) : (
+                profilesInSession.map((profile) => (
+                  <A6yStream
+                    key={profile.id}
+                    profileInSession={profile}
+                    onStartScreenShare={handleStartScreenShare}
+                  />
+                ))
+              )}
+            </>
           </Layout.Sider>
         </Layout>
       </Layout>

@@ -23,7 +23,6 @@ import {
   useProfile,
   useEngines,
   useSession,
-  useIgnoreMouseEvent,
   useSignalling,
 } from '../../hooks';
 import { updateProfile } from '../../services/api';
@@ -44,7 +43,6 @@ export const A6yStream: FC<StreamProps> = ({
   const { rtcEngine, publishedStreams, rdcEngine } = useEngines();
   const { signalling } = useSignalling();
   const intl = useIntl();
-  const ignoreMouseEvent = useIgnoreMouseEvent();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const { role, streams, username, id, rdcStatus, signals, screenShare } =
     profileInSession;
@@ -202,7 +200,6 @@ export const A6yStream: FC<StreamProps> = ({
 
   return (
     <div
-      {...ignoreMouseEvent}
       className={cls({
         'a6y-stream': 1,
         'a6y-host': role === RoleType.HOST,

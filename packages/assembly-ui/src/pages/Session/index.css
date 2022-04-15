@@ -1,14 +1,49 @@
 .a6y-screen-shares {
   overflow: hidden;
 }
-.a6y-screen-shares .ant-tabs-tabpane{
+
+
+.a6y-streams .ant-collapse {
+  background-color: transparent;
+}
+
+.a6y-streams .ant-collapse>.ant-collapse-item>.ant-collapse-header {
+  padding: 0 8px;
+  justify-content: flex-end;
+}
+.a6y-streams .ant-collapse>.ant-collapse-item>.ant-collapse-header > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1f1f1f;
+  height: 24px;
+  width: 24px;
+  border-radius: 24px;
+}
+
+.a6y-streams .ant-collapse>.ant-collapse-item>.ant-collapse-header > div > span {
+  margin-right: 0px;
+}
+
+.a6y-streams .ant-collapse-content-box {
+  padding: 0 !important;
+  background-color: transparent !important;
+}
+
+.a6y-screen-shares .ant-tabs-tabpane {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .a6y-focus-mode {
   --border-color: #389e0d;
-  background: linear-gradient(to right, var(--border-color) 4px, transparent 4px) 0 0,
+  background: linear-gradient(
+        to right,
+        var(--border-color) 4px,
+        transparent 4px
+      )
+      0 0,
     linear-gradient(to right, var(--border-color) 4px, transparent 4px) 0 100%,
     linear-gradient(to left, var(--border-color) 4px, transparent 4px) 100% 0,
     linear-gradient(to left, var(--border-color) 4px, transparent 4px) 100% 100%,
@@ -19,10 +54,12 @@
   background-repeat: no-repeat;
   background-size: 20px 20px;
 }
+
 .a6y-focus-mode,
 .a6y-focus-mode .ant-layout {
   background-color: transparent;
 }
+
 .a6y-focus-mode #root {
   position: relative;
 }
