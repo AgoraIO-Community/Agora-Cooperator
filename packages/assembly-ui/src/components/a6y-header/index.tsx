@@ -13,12 +13,17 @@ import { Timer } from './Timer';
 import './index.css';
 import { NetworkIndicator } from './NetworkIndicator';
 import { updateProfile } from '../../services/api';
+import { Button } from 'antd';
 
 export interface A6yHeaderProps {
   hasMarkable?: boolean;
+  onStopScreenShare?: () => void;
 }
 
-export const A6yHeader: FC<A6yHeaderProps> = ({ hasMarkable }) => {
+export const A6yHeader: FC<A6yHeaderProps> = ({
+  hasMarkable,
+  onStopScreenShare,
+}) => {
   const session = useSession();
   const { profile, refetchProfile } = useProfile();
   const intl = useIntl();
@@ -66,6 +71,13 @@ export const A6yHeader: FC<A6yHeaderProps> = ({ hasMarkable }) => {
         disabled={hasMarkable && !profile?.markable}>
         <BiPencil size={16} />
       </button>
+      <Button
+        onClick={onStopScreenShare}
+        className="a6y-stop-screen-share"
+        size="small"
+        danger={true}>
+        {intl.formatMessage({ id: 'session.header.stopScreeShare' })}
+      </Button>
     </div>
   );
 };
