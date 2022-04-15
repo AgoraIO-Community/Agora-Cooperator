@@ -192,10 +192,11 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = memo(
           const targetEl = mutation.target as HTMLDivElement;
           const renderingEl = targetEl.querySelector('canvas');
           if (mutation.addedNodes.length > 0 && renderingEl) {
-            if (!resizeObserver) {
-              resizeObserver = new ResizeObserver(handElResize);
-              resizeObserver.observe(renderingEl);
+            if (resizeObserver) {
+              resizeObserver.disconnect();
             }
+            resizeObserver = new ResizeObserver(handElResize);
+            resizeObserver.observe(renderingEl);
             const { width: cWidth, height: cHeight, style } = renderingEl;
             // @ts-ignore TS2339: Property 'zoom' does not exist on type 'CSSStyleDeclaration'.
             const zoom = Number(style.zoom);
