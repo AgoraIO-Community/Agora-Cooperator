@@ -533,6 +533,13 @@ export const Root = () => {
       </Layout>
       {profile?.markable ? (
         <A6yFastBoard
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            height: window.screen.height,
+            width: window.screen.width,
+          }}
           aspectRatio={profile?.aspectRatio}
           scene={`/screen-share/${profile?.id}`}
         />
