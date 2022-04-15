@@ -14,13 +14,12 @@ const LANGUAGES: { [key: string]: 'en' | 'zh-CN' } = {
 
 export interface A6yFastBoardProps {
   scene?: string;
-  markable?: boolean;
   aspectRatio?: number;
   style?: React.CSSProperties;
 }
 
 export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
-  ({ markable, style, scene, aspectRatio }) => {
+  ({ style, scene, aspectRatio }) => {
     const { profile } = useProfile();
     const [fastBoard, setFastBoard] = useState<FastboardApp | undefined>();
     const { language } = navigator;
@@ -32,14 +31,6 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
       }
       let instance: FastboardApp;
       const { appIdentifier, uuid, token } = whiteboard;
-      if (fastBoard) {
-        fastBoard.destroy().then(() => {
-          setFastBoard(undefined);
-        });
-      }
-      if (!fastBoard) {
-        return;
-      }
       createFastboard({
         sdkConfig: {
           appIdentifier,
@@ -56,6 +47,7 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
         },
       })
         .then((app) => {
+          console.log('create fastboard app with aspectRatio:', aspectRatio);
           instance = app;
           setFastBoard(instance);
         })
@@ -63,14 +55,14 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
           console.error(error);
         });
       return () => {
-        if (instance) {
+        if (instance && instance.room.phase === 'connected') {
           instance.destroy();
         }
       };
-    }, [whiteboard, username, aspectRatio, fastBoard]);
+    }, [whiteboard, username, aspectRatio]);
 
     useEffect(() => {
-      if (!fastBoard || !markable || !scene) {
+      if (!fastBoard || !scene) {
         return;
       }
       const { displayer, room } = fastBoard.manager;
@@ -80,9 +72,10 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
         room.putScenes(scene, []);
       }
       displayer.state.sceneState.scenePath = scene;
-    }, [fastBoard, markable, scene]);
+      console.log('change scene to:', displayer.state.sceneState.scenePath);
+    }, [fastBoard, , scene]);
 
-    return markable ? (
+    return (
       <div style={style} className="a6y-fastboard-wrap">
         <Fastboard
           app={fastBoard}
@@ -96,6 +89,6 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
           }}
         />
       </div>
-    ) : null;
+    );
   },
 );
