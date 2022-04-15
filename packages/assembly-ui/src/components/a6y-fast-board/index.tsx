@@ -65,14 +65,19 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
       if (!fastBoard || !scene) {
         return;
       }
-      const { displayer, room } = fastBoard.manager;
-      const allScenes = displayer.entireScenes();
-      const currentScenes = allScenes[scene];
-      if (!currentScenes) {
-        room.putScenes(scene, []);
+      const { room } = fastBoard.manager;
+      const allScenes = room.entireScenes();
+      const screenShareScenes = allScenes['/screen-share'];
+      const currentScenesName = scene.split('/')[scene.split('/').length - 1];
+      const currentScenes = (screenShareScenes ??[]).find(s => s.name == currentScenesName)
+      if (!currentScenes || !currentScenes) {
+        room.putScenes(`/screen-share`, [{
+          name: currentScenesName,
+        }]);
       }
-      displayer.state.sceneState.scenePath = scene;
-      console.log('change scene to:', displayer.state.sceneState.scenePath);
+      console.log('all cenes', room.entireScenes());
+      room.setScenePath(scene);
+      console.log('change scene to:', room.state.sceneState.scenePath);
     }, [fastBoard, scene]);
 
     return (
