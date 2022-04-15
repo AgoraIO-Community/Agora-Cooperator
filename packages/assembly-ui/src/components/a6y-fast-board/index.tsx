@@ -73,7 +73,7 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
       }
       displayer.state.sceneState.scenePath = scene;
       console.log('change scene to:', displayer.state.sceneState.scenePath);
-    }, [fastBoard, , scene]);
+    }, [fastBoard, scene]);
 
     return (
       <div style={style} className="a6y-fastboard-wrap">
