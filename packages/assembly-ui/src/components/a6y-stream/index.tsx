@@ -123,6 +123,7 @@ export const A6yStream: FC<StreamProps> = ({
       await updateProfile(session.id, profile.id, {
         screenShare: false,
         screenVisibility: ScreenVisibility.ONLY_HOST,
+        markable: false,
         streams: [{ id: screenStream.id, video: false, audio: false }],
       });
       return;
