@@ -59,7 +59,7 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
           },
         ]);
       }
-      console.log('all cenes', room.entireScenes());
+      console.log('all scenes', room.entireScenes());
       room.setScenePath(scene);
       console.log('change scene to:', room.state.sceneState.scenePath);
     }, [fastboard, scene]);
