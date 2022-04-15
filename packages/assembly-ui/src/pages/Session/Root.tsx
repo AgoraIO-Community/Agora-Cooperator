@@ -8,7 +8,6 @@ import {
   useSession,
   useSignalling,
   ProfileInSession,
-  useFastBoard,
   useIgnoreMouseEvent,
 } from '../../hooks';
 import {
@@ -48,7 +47,6 @@ export const Root = () => {
   const intl = useIntl();
   const ignoreMouseEvent = useIgnoreMouseEvent();
   const { setDisplayId, setDisplayConfig, rdcEngine, rtcEngine } = useEngines();
-  const fastBoard = useFastBoard();
   const [screenSelectorVisible, setScreenSelectorVisible] = useState(false);
   const [activeTabKey, setActiveTabKey] = useState<string>();
   const [screenSelectorPurpose, setScreenSelectorPurpose] =
@@ -453,18 +451,13 @@ export const Root = () => {
   }, [handleScreenLocked]);
 
   useEffect(() => {
-    if (!profile || !profile.markable || !fastBoard) {
+    if (!session?.id || !profile?.id) {
       return;
     }
-
-    const { displayer, room } = fastBoard.manager;
-    const allScenes = displayer.entireScenes();
-    const currentScenes = allScenes[`/{${profile.id}}`];
-    if (!currentScenes) {
-      room.putScenes(`/${profile.id}`, []);
-    }
-    displayer.state.sceneState.scenePath = `/${profile.id}`;
-  }, [profile, fastBoard]);
+    updateProfile(session.id, profile.id, {
+      aspectRatio: window.screen.height / window.screen.width,
+    });
+  }, [session?.id, profile?.id]);
 
   return (
     <>
@@ -538,7 +531,10 @@ export const Root = () => {
           </Layout.Sider>
         </Layout>
       </Layout>
-      <A6yFastBoard markable={profile?.markable} />
+      <A6yFastBoard
+        markable={profile?.markable}
+        scene={`/screen-share/${profile?.id}`}
+      />
       {screenSelectorVisible ? (
         <A6yScreenSelector
           title={screenSelectorTitle}

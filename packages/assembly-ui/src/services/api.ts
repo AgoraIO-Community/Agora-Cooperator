@@ -32,7 +32,11 @@ export const updateProfile = (
   params: Partial<
     Pick<
       Profile,
-      'rdcStatus' | 'screenShare' | 'markable' | 'screenVisibility'
+      | 'rdcStatus'
+      | 'screenShare'
+      | 'markable'
+      | 'screenVisibility'
+      | 'aspectRatio'
     > & {
       streams: Partial<Stream>[];
     }

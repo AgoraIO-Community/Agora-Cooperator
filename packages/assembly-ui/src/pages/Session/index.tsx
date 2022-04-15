@@ -5,7 +5,6 @@ import {
   ProfilesInSessionProvider,
   SessionProvider,
   SignallingProvider,
-  FastBoardProvider,
   EnginesProvider,
 } from '../../hooks';
 import { Root } from './Root';
@@ -23,9 +22,7 @@ const Session = () => {
         <SignallingProvider>
           <ProfilesInSessionProvider>
             <EnginesProvider>
-              <FastBoardProvider>
-                <Root />
-              </FastBoardProvider>
+              <Root />
             </EnginesProvider>
           </ProfilesInSessionProvider>
         </SignallingProvider>

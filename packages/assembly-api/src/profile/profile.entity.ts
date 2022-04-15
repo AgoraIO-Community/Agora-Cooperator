@@ -39,6 +39,9 @@ export class ProfileEntity implements Profile {
   screenVisibility: ScreenVisibility;
 
   @Column()
+  aspectRatio: number;
+
+  @Column()
   markable: boolean;
 
   @Column()

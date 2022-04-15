@@ -46,6 +46,7 @@ export class ProfileController {
       | 'screenShare'
       | 'streams'
       | 'screenVisibility'
+      | 'aspectRatio'
     >,
   ) {
     return await this.profileService.updateProfile(

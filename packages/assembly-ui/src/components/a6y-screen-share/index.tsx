@@ -22,7 +22,6 @@ import {
   useEngines,
   ProfileInSession,
   useSession,
-  useFastBoard,
 } from '../../hooks';
 import { A6yFastBoard } from '../a6y-fast-board';
 import { updateProfile } from '../../services/api';
@@ -58,7 +57,6 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = memo(
     const screenStream = profileInSession?.streams.find(
       (s) => s.kind === StreamKind.SCREEN,
     );
-    const fastBoard = useFastBoard();
 
     const SCREEN_VISIBILITY_MAP: { [key in ScreenVisibility]: string } = {
       [ScreenVisibility.ONLY_HOST]: intl.formatMessage({
@@ -227,19 +225,6 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = memo(
       }
     }, [isFullscreen, screenShareElRef]);
 
-    useEffect(() => {
-      if (!fastBoard || !profileInSession.markable) {
-        return;
-      }
-      const { displayer, room } = fastBoard.manager;
-      const allScenes = displayer.entireScenes();
-      const currentScenes = allScenes[`/{${profileInSession.id}}`];
-      if (!currentScenes) {
-        room.putScenes(`/${profileInSession.id}`, []);
-      }
-      displayer.state.sceneState.scenePath = `/${profileInSession.id}`;
-    }, [fastBoard, profileInSession]);
-
     return (
       <div
         style={{
@@ -261,6 +246,7 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = memo(
         {profileInSession.screenShare ? (
           <div className="a6y-fastboard-container">
             <A6yFastBoard
+              scene={`/screen-share/${profileInSession.id}`}
               markable={profileInSession.markable}
               style={{ height: fbHeight, width: fbWidth }}
             />

@@ -21,6 +21,7 @@ export interface Profile {
   rdcStatus: RDCStatus;
   screenShare: boolean;
   screenVisibility: ScreenVisibility;
+  aspectRatio: number;
   markable: boolean;
   createdAt: Date;
   expiredAt: Date;

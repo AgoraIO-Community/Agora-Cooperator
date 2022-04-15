@@ -64,6 +64,7 @@ export class ProfileService {
       screenShare: false,
       markable: false,
       screenVisibility: ScreenVisibility.ONLY_HOST,
+      aspectRatio: 9 / 16,
       createdAt: new Date(),
       lastSeen: new Date(),
       expiredAt: session.expiredAt,
@@ -96,9 +97,15 @@ export class ProfileService {
       markable,
       streams,
       screenVisibility,
+      aspectRatio,
     }: Pick<
       ProfileEntity,
-      'rdcStatus' | 'screenShare' | 'markable' | 'streams' | 'screenVisibility'
+      | 'rdcStatus'
+      | 'screenShare'
+      | 'markable'
+      | 'streams'
+      | 'screenVisibility'
+      | 'aspectRatio'
     >,
   ): Promise<ProfileEntity> {
     const profileEntity = await this.findProfile(profileId);
@@ -113,6 +120,9 @@ export class ProfileService {
     }
     if (typeof markable !== 'undefined') {
       profileEntity.markable = markable;
+    }
+    if (typeof aspectRatio !== 'undefined') {
+      profileEntity.aspectRatio = aspectRatio;
     }
     if (typeof streams !== 'undefined') {
       profileEntity.streams = profileEntity.streams.map((stream) => {
