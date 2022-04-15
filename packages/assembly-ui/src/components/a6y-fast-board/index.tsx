@@ -1,11 +1,9 @@
 import React, { FC, useEffect, memo, useState } from 'react';
-import {
-  createFastboard,
-  Fastboard,
-  FastboardApp,
-} from '@netless/fastboard-react';
+import { useFastboard, Fastboard } from '@netless/fastboard-react';
+import { useUnmount } from 'react-use';
 import './index.css';
 import { useProfile } from '../../hooks';
+import { ProfileEntity } from '../../services/api';
 
 const LANGUAGES: { [key: string]: 'en' | 'zh-CN' } = {
   'en-US': 'en',
@@ -13,77 +11,63 @@ const LANGUAGES: { [key: string]: 'en' | 'zh-CN' } = {
 };
 
 export interface A6yFastBoardProps {
+  profile: ProfileEntity;
+  aspectRatio: number;
   scene?: string;
-  aspectRatio?: number;
   style?: React.CSSProperties;
 }
 
 export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
-  ({ style, scene, aspectRatio }) => {
-    const { profile } = useProfile();
-    const [fastBoard, setFastBoard] = useState<FastboardApp | undefined>();
+  ({ style, scene, aspectRatio, profile }) => {
     const { language } = navigator;
-    const { whiteboard, username } = profile ?? {};
+    const { whiteboard, username } = profile;
+    const { appIdentifier, uuid, token } = whiteboard;
+    const fastboard = useFastboard(() => ({
+      sdkConfig: {
+        appIdentifier,
+        region: 'cn-hz', // "cn-hz" | "us-sv" | "sg" | "in-mum" | "gb-lon",
+      },
+      joinRoom: {
+        uid: username,
+        uuid: uuid,
+        roomToken: token,
+        hotKeys: {},
+      },
+      managerConfig: {
+        containerSizeRatio: aspectRatio,
+      },
+    }));
 
     useEffect(() => {
-      if (!whiteboard || !aspectRatio || !username) {
+      if (!fastboard || !scene) {
         return;
       }
-      let instance: FastboardApp;
-      const { appIdentifier, uuid, token } = whiteboard;
-      createFastboard({
-        sdkConfig: {
-          appIdentifier,
-          region: 'cn-hz', // "cn-hz" | "us-sv" | "sg" | "in-mum" | "gb-lon",
-        },
-        joinRoom: {
-          uid: username,
-          uuid: uuid,
-          roomToken: token,
-          hotKeys: {},
-        },
-        managerConfig: {
-          containerSizeRatio: aspectRatio,
-        },
-      })
-        .then((app) => {
-          console.log('create fastboard app with aspectRatio:', aspectRatio);
-          instance = app;
-          setFastBoard(instance);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-      return () => {
-        if (instance && instance.room.phase === 'connected') {
-          instance.destroy();
-        }
-      };
-    }, [whiteboard, username, aspectRatio]);
-
-    useEffect(() => {
-      if (!fastBoard || !scene) {
+      const { room } = fastboard.manager;
+      if (room.phase !== 'connected') {
         return;
       }
-      const { room } = fastBoard.manager;
       const allScenes = room.entireScenes();
       const screenShareScenes = allScenes['/screen-share'];
       const currentScenesName = scene.split('/')[scene.split('/').length - 1];
-      const currentScenes = (screenShareScenes ??[]).find(s => s.name == currentScenesName)
+      const currentScenes = (screenShareScenes ?? []).find(
+        (s) => s.name === currentScenesName,
+      );
       if (!currentScenes || !currentScenes) {
-        room.putScenes(`/screen-share`, [{
-          name: currentScenesName,
-        }]);
+        room.putScenes(`/screen-share`, [
+          {
+            name: currentScenesName,
+          },
+        ]);
       }
       console.log('all cenes', room.entireScenes());
       room.setScenePath(scene);
       console.log('change scene to:', room.state.sceneState.scenePath);
-    }, [fastBoard, scene]);
+    }, [fastboard, scene]);
 
     return (
       <div style={style} className="a6y-fastboard-wrap">
         <Fastboard
-          app={fastBoard}
+          app={fastboard}
           language={LANGUAGES[language] ?? 'en'}
           theme="dark"
           config={{

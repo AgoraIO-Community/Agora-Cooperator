@@ -531,8 +531,9 @@ export const Root = () => {
           </Layout.Sider>
         </Layout>
       </Layout>
-      {profile?.markable ? (
+      {profile?.markable && profile.screenShare ? (
         <A6yFastBoard
+          profile={profile}
           style={{
             position: 'fixed',
             top: 0,
