@@ -80,7 +80,7 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
         room.putScenes(scene, []);
       }
       displayer.state.sceneState.scenePath = scene;
-    }, [fastBoard, markable]);
+    }, [fastBoard, markable, scene]);
 
     return markable ? (
       <div style={style} className="a6y-fastboard-wrap">
