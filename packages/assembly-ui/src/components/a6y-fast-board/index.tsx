@@ -15,15 +15,16 @@ const LANGUAGES: { [key: string]: 'en' | 'zh-CN' } = {
 export interface A6yFastBoardProps {
   scene?: string;
   markable?: boolean;
+  aspectRatio?: number;
   style?: React.CSSProperties;
 }
 
 export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
-  ({ markable, style, scene }) => {
+  ({ markable, style, scene, aspectRatio }) => {
     const { profile } = useProfile();
     const [fastBoard, setFastBoard] = useState<FastboardApp | undefined>();
     const { language } = navigator;
-    const { whiteboard, aspectRatio, username } = profile ?? {};
+    const { whiteboard, username } = profile ?? {};
 
     useEffect(() => {
       if (!whiteboard || !aspectRatio || !username) {
