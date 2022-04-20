@@ -1,6 +1,6 @@
 {
   "name": "assembly-api",
-  "version": "0.0.1-alpha.18",
+  "version": "0.0.1-alpha.19",
   "description": "",
   "author": "",
   "private": true,
@@ -26,7 +26,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.3",
     "agora-access-token": "^2.0.4",
-    "assembly-shared": "workspace:^0.0.1-alpha.18",
+    "assembly-shared": "workspace:^0.0.1-alpha.19",
     "axios": "^0.26.1",
     "dayjs": "^1.11.0",
     "mysql2": "^2.3.3",
