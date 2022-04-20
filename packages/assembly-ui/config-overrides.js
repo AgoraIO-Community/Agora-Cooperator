@@ -4,8 +4,8 @@ const webpack = require('webpack');
 const env = process.env.NODE_ENV || 'development';
 
 const API_HOSTS = {
-  development: 'http://localhost:3030', // please replace ip with your local network
-  // development: 'https://assembly-api.gz3.agoralab.co',
+  development: 'http://localhost:3030', // disable this line for using remote server
+  // development: 'https://assembly-api.gz3.agoralab.co', // enable this line for using remote server
   production: 'https://assembly-api.gz3.agoralab.co',
 };
 
