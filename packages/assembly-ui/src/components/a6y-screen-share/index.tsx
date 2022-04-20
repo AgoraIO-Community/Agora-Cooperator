@@ -249,7 +249,7 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = memo(
           <div className="a6y-fastboard-container">
             <A6yFastBoard
               profile={profile}
-              scene={`/screen-share/${profileInSession.id}`}
+              scene={`screen-share-${profileInSession.id}`}
               aspectRatio={profileInSession.aspectRatio}
               style={{ height: fbHeight, width: fbWidth }}
             />

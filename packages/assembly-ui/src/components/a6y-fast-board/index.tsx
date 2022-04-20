@@ -30,6 +30,7 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
         uuid: uuid,
         roomToken: token,
         hotKeys: {},
+        disableNewPencil: true,
       },
       managerConfig: {
         containerSizeRatio: aspectRatio,
@@ -40,26 +41,19 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
       if (!fastboard || !scene) {
         return;
       }
-      const { room } = fastboard.manager;
+      const { room, displayer } = fastboard.manager;
       if (room.phase !== 'connected') {
         return;
       }
-      const allScenes = room.entireScenes();
-      const screenShareScenes = allScenes['/screen-share'];
-      const currentScenesName = scene.split('/')[scene.split('/').length - 1];
-      const currentScenes = (screenShareScenes ?? []).find(
-        (s) => s.name === currentScenesName,
-      );
-      if (!currentScenes || !currentScenes) {
-        room.putScenes(`/screen-share`, [
-          {
-            name: currentScenesName,
-          },
-        ]);
+      const allScenes = displayer.entireScenes();
+      const rootScenes = allScenes['/'];
+      const currentScenes = (rootScenes ?? []).find((s) => s.name === scene);
+      if (!currentScenes) {
+        fastboard.manager.addPage({ scene: { name: scene } });
       }
-      console.log('all scenes', room.entireScenes());
-      room.setScenePath(scene);
-      console.log('change scene to:', room.state.sceneState.scenePath);
+      console.log('all scenes', displayer.entireScenes());
+      fastboard.manager.setMainViewScenePath(`/${scene}`);
+      console.log('change scene to:', displayer.state.sceneState.scenePath);
     }, [fastboard, scene]);
 
     return (

@@ -542,7 +542,7 @@ export const Root = () => {
             width: window.screen.width,
           }}
           aspectRatio={profile?.aspectRatio}
-          scene={`/screen-share/${profile?.id}`}
+          scene={`screen-share-${profile?.id}`}
         />
       ) : null}
       {screenSelectorVisible ? (
