@@ -1,37 +1,43 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { RDCRoleType } from 'agora-rdc-electron';
 import { Collapse, Layout, message, Modal, Tabs } from 'antd';
 import {
-  useCheckInOut,
-  useProfile,
-  useProfilesInSession,
-  useEngines,
-  useSession,
-  useSignalling,
-  ProfileInSession,
-  useIgnoreMouseEvent,
-} from '../../hooks';
-import {
-  A6yStream,
-  A6yHeader,
-  A6yFastBoard,
-  A6yScreenShare,
-  A6yScreenSelector,
-  A6yScreenSelectorPurpose,
-} from '../../components';
-import './index.css';
-import {
   RDCStatus,
-  StreamKind,
-  SignalKind,
   RoleType,
   ScreenVisibility,
+  SignalCommand,
+  SignalKind,
+  StreamKind,
 } from 'assembly-shared';
+import { ipcRenderer, remote } from 'electron';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { BiStopCircle } from 'react-icons/bi';
+import { useIntl } from 'react-intl';
+import {
+  A6yFastBoard,
+  A6yHeader,
+  A6yScreenSelector,
+  A6yScreenSelectorPurpose,
+  A6yScreenShare,
+  A6yStream,
+} from '../../components';
+import {
+  ProfileInSession,
+  useCheckInOut,
+  useEngines,
+  useIgnoreMouseEvent,
+  useProfile,
+  useProfilesInSession,
+  useSession,
+  useSignalling,
+} from '../../hooks';
 import { updateProfile } from '../../services/api';
 import { Commands } from '../../services/Signalling';
-import { useIntl } from 'react-intl';
-import { RDCRoleType } from 'agora-rdc-electron';
-import { ipcRenderer, remote } from 'electron';
-import { BiStopCircle } from 'react-icons/bi';
+import './index.css';
+
+export interface StopScreenShareInfo {
+  profileId: string;
+  username: string;
+}
 
 const BITRATES: { [key: string]: number } = {
   '1280x720': 1000,
@@ -69,6 +75,25 @@ export const Root = () => {
     setScreenSelectorVisible(true);
   };
 
+  const handleStopScreenShareCmd = (payload: StopScreenShareInfo) => {
+    if (!profile) {
+      return;
+    }
+    const host = profilesInSession.find((v) => {
+      return v.role === RoleType.HOST;
+    });
+
+    if (profile.role !== RoleType.HOST && host && signalling) {
+      const signal = host.signals.find((v) => v.kind === SignalKind.NORMAL);
+      if (signal) {
+        signalling.sendMessage(signal.uid, {
+          command: SignalCommand.STOP_SCREEN_SHARE,
+          payload,
+        });
+      }
+    }
+  };
+
   const handleStopScreenShare = () => {
     if (!session || !profile || !screenStream) {
       return;
@@ -79,7 +104,28 @@ export const Root = () => {
       screenVisibility: ScreenVisibility.ONLY_HOST,
       streams: [{ id: screenStream.id, video: false, audio: false }],
     });
+
+    handleStopScreenShareCmd({
+      profileId: profile.id,
+      username: profile.username,
+    });
   };
+
+  useEffect(() => {
+    if (profile && profile.role === RoleType.HOST && signalling) {
+      const handler = (info: StopScreenShareInfo) => {
+        message.warning(
+          `${info.username} ${intl.formatMessage({
+            id: 'session.notify.stopScreenShare',
+          })}`,
+        );
+      };
+      signalling.on(Commands.STOP_SCREEN_SHARE, handler);
+      return () => {
+        signalling.off(Commands.STOP_SCREEN_SHARE, handler);
+      };
+    }
+  }, [signalling, intl, profile]);
 
   const handleScreenSelectorOk = async (
     displayId: any,
@@ -459,6 +505,21 @@ export const Root = () => {
     });
   }, [session?.id, profile?.id]);
 
+  const screenShareList = useMemo(() => {
+    return profilesInSession
+      .filter(
+        (p) =>
+          (p.screenShare || p.rdcStatus === RDCStatus.ACTIVE) &&
+          p.id !== profile?.id,
+      )
+      .filter(
+        (p) =>
+          (profile?.role === RoleType.NORMAL &&
+            p.screenVisibility === ScreenVisibility.ALL) ||
+          profile?.role === RoleType.HOST,
+      );
+  }, [profile, profilesInSession]);
+
   return (
     <>
       <Layout
@@ -477,26 +538,14 @@ export const Root = () => {
                 activeKey={activeTabKey}
                 destroyInactiveTabPane={true}
                 onTabClick={(activeKey) => setActiveTabKey(activeKey)}>
-                {profilesInSession
-                  .filter(
-                    (p) =>
-                      (p.screenShare || p.rdcStatus === RDCStatus.ACTIVE) &&
-                      p.id !== profile?.id,
-                  )
-                  .filter(
-                    (p) =>
-                      (profile?.role === RoleType.NORMAL &&
-                        p.screenVisibility === ScreenVisibility.ALL) ||
-                      profile?.role === RoleType.HOST,
-                  )
-                  .map((p) => (
-                    <Tabs.TabPane key={p.id} tab={p.username}>
-                      <A6yScreenShare
-                        profileInSession={p}
-                        hasMarkable={hasMarkable}
-                      />
-                    </Tabs.TabPane>
-                  ))}
+                {screenShareList.map((p) => (
+                  <Tabs.TabPane key={p.id} tab={p.username}>
+                    <A6yScreenShare
+                      profileInSession={p}
+                      hasMarkable={hasMarkable}
+                    />
+                  </Tabs.TabPane>
+                ))}
               </Tabs>
             </div>
           </Layout.Content>
@@ -513,6 +562,7 @@ export const Root = () => {
                           key={profile.id}
                           profileInSession={profile}
                           onStartScreenShare={handleStartScreenShare}
+                          onStopScreenShare={handleStopScreenShareCmd}
                         />
                       ))}
                     </Collapse.Panel>
@@ -524,6 +574,7 @@ export const Root = () => {
                     key={profile.id}
                     profileInSession={profile}
                     onStartScreenShare={handleStartScreenShare}
+                    onStopScreenShare={handleStopScreenShareCmd}
                   />
                 ))
               )}

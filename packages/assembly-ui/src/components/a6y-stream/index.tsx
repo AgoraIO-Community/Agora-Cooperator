@@ -27,15 +27,18 @@ import {
 } from '../../hooks';
 import { updateProfile } from '../../services/api';
 import './index.css';
+import { StopScreenShareInfo } from '../../pages/Session/Root';
 
 export interface StreamProps {
   profileInSession: ProfileInSession;
   onStartScreenShare: () => void;
+  onStopScreenShare?: (payload: StopScreenShareInfo) => void;
 }
 
 export const A6yStream: FC<StreamProps> = ({
   profileInSession,
   onStartScreenShare,
+  onStopScreenShare,
 }) => {
   const attachElRef = useRef<HTMLDivElement>(null);
   const session = useSession();
@@ -126,6 +129,7 @@ export const A6yStream: FC<StreamProps> = ({
         markable: false,
         streams: [{ id: screenStream.id, video: false, audio: false }],
       });
+      onStopScreenShare && onStopScreenShare({profileId:profile.id,username:profile.username});
       return;
     }
     signalling.sendMessage(signal.uid, {

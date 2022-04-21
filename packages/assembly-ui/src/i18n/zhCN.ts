@@ -15,6 +15,7 @@ const messages = {
   'session.header.stopScreeShare': '结束共享',
   'session.controlledBy': '你的电脑正在被{username}控制',
   'session.confirm.stopControl': '你确定要停止控制吗？',
+  'session.notify.stopScreenShare': '停止屏幕共享',
   'a6y.stream.audio.off': '关闭麦克风',
   'a6y.stream.audio.on': '打开麦克风',
   'a6y.stream.audio.on.request': '邀请打开麦克风',

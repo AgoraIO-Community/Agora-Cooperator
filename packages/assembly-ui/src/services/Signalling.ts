@@ -1,6 +1,6 @@
-import AgoraRTM, { RtmClient, RtmChannel } from 'agora-rtm-sdk';
-import EventEmitter from 'eventemitter3';
+import AgoraRTM, { RtmChannel, RtmClient } from 'agora-rtm-sdk';
 import { SignalCommand, SignalPayload } from 'assembly-shared';
+import EventEmitter from 'eventemitter3';
 
 export enum Commands {
   USER_IN = 'userIn',
@@ -9,6 +9,7 @@ export enum Commands {
   CONNECTION_CHANGE = 'connectionChange',
   ALL_ONLINE_PROFILES = 'allOnlineProfiles',
   REQUEST_CHANGE_DEVICE_STATE = 'requestChangeDeviceState',
+  STOP_SCREEN_SHARE = 'stopScreenShare',
 }
 
 export enum SignallingStatus {
@@ -25,6 +26,7 @@ const COMMANDS_MAP: { [k: number]: string } = {
   [SignalCommand.PROFILE_CHANGE]: 'profileChange',
   [SignalCommand.ALL_ONLINE_PROFILES]: 'allOnlineProfiles',
   [SignalCommand.REQUEST_CHANGE_DEVICE_STATE]: 'requestChangeDeviceState',
+  [SignalCommand.STOP_SCREEN_SHARE]: 'stopScreenShare',
 };
 
 export class Signalling extends EventEmitter {
@@ -94,10 +96,7 @@ export class Signalling extends EventEmitter {
   };
 
   private handleEvents = (...message: any[]) => {
-    const [event] = message as [
-      { messageType: string; text: string },
-      string,
-    ];
+    const [event] = message as [{ messageType: string; text: string }, string];
     if (event.messageType !== 'TEXT') {
       return;
     }

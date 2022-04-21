@@ -20,6 +20,7 @@ export enum SignalCommand {
   PROFILE_CHANGE = 2,
   ALL_ONLINE_PROFILES = 3,
   REQUEST_CHANGE_DEVICE_STATE = 4,
+  STOP_SCREEN_SHARE = 5,
 }
 
 export interface SignalPayload<T = any> {
