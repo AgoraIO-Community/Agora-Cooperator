@@ -17,26 +17,28 @@ import psTreeCBify from 'ps-tree';
 import util from 'util';
 import ps from 'ps-node';
 
-const kill = util.promisify(ps.kill);
+const kill: (
+  pID: number | string,
+  signal: string | ps.Signal,
+) => Promise<void> = util.promisify(ps.kill);
 const psTree = util.promisify(psTreeCBify);
 
 const killVSProcess = async () => {
-  if (process.platform !== 'win32') {
-    console.log('platform is not win32');
-    return;
-  }
   console.log('process pid:', process.pid);
   const childrenPS = await psTree(process.pid);
   console.log('all children process:', JSON.stringify(childrenPS));
-  const vsPS = childrenPS.find((ps) => ps.COMMAND.includes('VideoSource'));
+  const vsPS = childrenPS.find(
+    (ps: any) =>
+      (ps.COMMAND && ps.COMMAND.includes('VideoSource')) ||
+      (ps.COMM && ps.COMM.includes('VideoSource')),
+  );
   if (!vsPS) {
     console.log('can not found');
     return;
   }
   try {
-    await kill(vsPS.PID);
+    await kill(vsPS.PID, { signal: 'SIGKILL', timeout: 1 });
   } catch (error) {
-    console.error(error);
   }
 };
 
