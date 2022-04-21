@@ -67,7 +67,7 @@ export const A6yHeader: FC<A6yHeaderProps> = ({
         handleNetworkQualityChange,
       );
     };
-  }, [rtcEngine]);
+  }, [rtcEngine, handleNetworkQualityChange]);
 
   return (
     <div {...ignoreMouseEvent} className="a6y-header">
