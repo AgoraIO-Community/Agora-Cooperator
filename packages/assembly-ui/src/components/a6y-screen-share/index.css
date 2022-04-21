@@ -64,6 +64,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  user-select: none;
 }
 .a6y-screen-share-controls.host-controls {
   width: 140px;
