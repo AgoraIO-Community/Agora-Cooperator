@@ -17,6 +17,7 @@ const messages = {
   'session.header.stopScreeShare': 'Stop',
   'session.controlledBy': 'your computer is controlled by {username}',
   'session.confirm.stopControl': 'Are you sure you want to stop control?',
+  'session.notify.stopScreenShare': 'Stop Screen Share',
   'a6y.stream.audio.off': 'Disable Microphone',
   'a6y.stream.audio.on': 'Enable Microphone',
   'a6y.stream.audio.on.request': 'Request enable Microphone',
@@ -30,7 +31,8 @@ const messages = {
   'a6y.stream.screenShare.on.request': 'Request Screen Share',
   'a6y.screen.selector.screenShare.title':
     'Please select screen or window which you want to share.',
-  'a6y.screen.selector.withAudio': 'Share with audio at same time. Check this box and your microphone will be turned on',
+  'a6y.screen.selector.withAudio':
+    'Share with audio at same time. Check this box and your microphone will be turned on',
   'a6y.screen.selector.resolution': 'Resolution',
   'a6y.screen.selector.rdc.title':
     'Please select screen which you want to authorize.',
