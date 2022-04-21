@@ -38,8 +38,7 @@ const killVSProcess = async () => {
   }
   try {
     await kill(vsPS.PID, { signal: 'SIGKILL', timeout: 1 });
-  } catch (error) {
-  }
+  } catch (error) {}
 };
 
 enum ExternalStatus {
@@ -146,6 +145,26 @@ export const EnginesProvider: FC = ({ children }) => {
     });
     const { uid: userId, token } = signal;
     const { uid: streamId, token: streamToken } = screenStream;
+    if (profile.role === RoleType.HOST) {
+      rtcEngine.instance.videoSourceSetParameters(
+        JSON.stringify({ 'che.video.static_paced_sender_multiplier': 25 }),
+      );
+      rtcEngine.instance.videoSourceSetParameters(
+        JSON.stringify({ 'che.video.JbAdaptScreenShare': true }),
+      );
+      rtcEngine.instance.videoSourceSetParameters(
+        JSON.stringify({ 'che.video.videoSmoothRenderOpen': false }),
+      );
+      rtcEngine.instance.videoSourceSetParameters(
+        JSON.stringify({ 'che.video.videoEduSpecialSet': 0 }),
+      );
+    }
+    if (profile.role === RoleType.NORMAL) {
+      rtcEngine.instance.videoSourceSetParameters(
+        JSON.stringify({ 'che.video.static_paced_sender_multiplier': 25 }),
+      );
+    }
+
     instance
       .join(userId, token, session.channel, streamId, streamToken)
       .then(() => {
