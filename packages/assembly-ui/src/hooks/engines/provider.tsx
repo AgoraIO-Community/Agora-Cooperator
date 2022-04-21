@@ -56,10 +56,6 @@ export const EnginesProvider: FC = ({ children }) => {
   const titleBar = useTitlebar();
   const [rtcEngine, setRtcEngine] = useState<RtcEngine>();
   const [rdcEngine, setRdcEngine] = useState<AgoraRemoteDesktopControl>();
-  const [networkQuality, setNetworkQuality] = useState<{
-    up: number;
-    down: number;
-  }>({ up: 0, down: 0 });
   const [publishedStreams, setPublishedStreams] = useState<number[]>([]);
   const [authorizedControlUids, setAuthorizedControlUids] = useState<string[]>(
     [],
@@ -77,15 +73,11 @@ export const EnginesProvider: FC = ({ children }) => {
   const { profile } = useProfile();
   const session = useSession();
 
-  const handleNetworkQualityChange = useCallback(
-    ({ up = 0, down = 0 }) => {
-      setNetworkQuality({ up, down });
-    },
-    [setNetworkQuality],
-  );
-
   const handleStreamPublished = useCallback(
     (uid: number) => {
+      if (publishedStreams.includes(uid)) {
+        return;
+      }
       console.log('stream published', uniq([...publishedStreams, uid]));
       setPublishedStreams(uniq([...publishedStreams, uid]));
     },
@@ -243,26 +235,14 @@ export const EnginesProvider: FC = ({ children }) => {
     if (!rtcEngine) {
       return;
     }
-    rtcEngine.on(
-      RtcEngineEvents.NETWORK_QUALITY_CHANGE,
-      handleNetworkQualityChange,
-    );
+
     rtcEngine.on(RtcEngineEvents.PUBLISHED, handleStreamPublished);
     rtcEngine.on(RtcEngineEvents.UNPUBLISHED, handleStreamUnpublished);
     return () => {
-      rtcEngine.off(
-        RtcEngineEvents.NETWORK_QUALITY_CHANGE,
-        handleNetworkQualityChange,
-      );
       rtcEngine.off(RtcEngineEvents.PUBLISHED, handleStreamPublished);
       rtcEngine.off(RtcEngineEvents.UNPUBLISHED, handleStreamUnpublished);
     };
-  }, [
-    rtcEngine,
-    handleNetworkQualityChange,
-    handleStreamPublished,
-    handleStreamUnpublished,
-  ]);
+  }, [rtcEngine, handleStreamPublished, handleStreamUnpublished]);
 
   // handle RDC engine events
   useEffect(() => {
@@ -287,7 +267,6 @@ export const EnginesProvider: FC = ({ children }) => {
     <EnginesContext.Provider
       value={{
         rtcEngine,
-        networkQuality,
         publishedStreams,
         authorizedControlUids,
         setDisplayId,
