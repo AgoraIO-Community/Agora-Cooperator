@@ -7,11 +7,9 @@ export const EnginesContext = createContext<{
   rdcEngine?: AgoraRemoteDesktopControl;
   setDisplayConfig?: (config: DisplayConfiguration) => void;
   setDisplayId?: (disPlayId: any) => void;
-  networkQuality: { up: number; down: number };
   publishedStreams: number[];
   authorizedControlUids: string[];
 }>({
-  networkQuality: { up: 0, down: 0 },
   publishedStreams: [],
   authorizedControlUids: [],
 });

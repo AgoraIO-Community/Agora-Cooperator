@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import dayjs from 'dayjs';
 import { BiDownArrowAlt, BiUpArrowAlt, BiPencil } from 'react-icons/bi';
@@ -14,6 +14,7 @@ import './index.css';
 import { NetworkIndicator } from './NetworkIndicator';
 import { updateProfile } from '../../services/api';
 import { Button } from 'antd';
+import { RtcEngineEvents } from '../../services/RtcEngine';
 
 export interface A6yHeaderProps {
   hasMarkable?: boolean;
@@ -28,7 +29,11 @@ export const A6yHeader: FC<A6yHeaderProps> = ({
   const { profile, refetchProfile } = useProfile();
   const intl = useIntl();
   const ignoreMouseEvent = useIgnoreMouseEvent();
-  const { networkQuality } = useEngines();
+  const [networkQuality, setNetworkQuality] = useState<{
+    up: number;
+    down: number;
+  }>({ up: 0, down: 0 });
+  const { rtcEngine } = useEngines();
 
   const toggleMarkable = async () => {
     if (!session || !profile || !refetchProfile) {
@@ -39,6 +44,30 @@ export const A6yHeader: FC<A6yHeaderProps> = ({
     });
     refetchProfile();
   };
+
+  const handleNetworkQualityChange = useCallback(
+    ({ up = 0, down = 0 }) => {
+      setNetworkQuality({ up, down });
+    },
+    [setNetworkQuality],
+  );
+
+  useEffect(() => {
+    if (!rtcEngine) {
+      return;
+    }
+
+    rtcEngine.on(
+      RtcEngineEvents.NETWORK_QUALITY_CHANGE,
+      handleNetworkQualityChange,
+    );
+    return () => {
+      rtcEngine.off(
+        RtcEngineEvents.NETWORK_QUALITY_CHANGE,
+        handleNetworkQualityChange,
+      );
+    };
+  }, [rtcEngine]);
 
   return (
     <div {...ignoreMouseEvent} className="a6y-header">
