@@ -107,30 +107,29 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = memo(
       [setFbSize],
     );
 
-    const resizeObserverRef = useRef<ResizeObserver>(
-      new ResizeObserver((entries, _observer) => {
-        const entry = entries.find(
-          (entry) => entry.target instanceof HTMLCanvasElement,
-        );
-        if (!entry) {
-          return;
-        }
-        updateFBSize(entry.target as HTMLCanvasElement);
+    const canvasElMutationObserverRef = useRef<MutationObserver>(
+      new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          const targetEl = mutation.target as HTMLCanvasElement;
+          if (!targetEl) {
+            return;
+          }
+          updateFBSize(targetEl);
+        });
       }),
     );
 
-    const mutationObserverRef = useRef<MutationObserver>(
+    const attachElMutationObserverRef = useRef<MutationObserver>(
       new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           const targetEl = mutation.target as HTMLDivElement;
           const renderingEl = targetEl.querySelector('canvas');
           if (mutation.addedNodes.length > 0 && renderingEl) {
-            resizeObserverRef.current.observe(renderingEl);
+            canvasElMutationObserverRef.current.observe(renderingEl, {attributes: true});
             updateFBSize(renderingEl);
           }
           if (mutation.removedNodes.length > 0 && renderingEl) {
-            resizeObserverRef.current.unobserve(renderingEl);
-            updateFBSize(renderingEl);
+            canvasElMutationObserverRef.current.disconnect();
           }
         });
       }),
@@ -204,7 +203,7 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = memo(
       if (!attachEl) {
         return;
       }
-      mutationObserverRef.current.observe(attachEl, {
+      attachElMutationObserverRef.current.observe(attachEl, {
         subtree: true,
         childList: true,
         attributes: true,
