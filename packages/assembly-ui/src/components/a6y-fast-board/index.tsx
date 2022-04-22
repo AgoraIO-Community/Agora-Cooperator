@@ -41,6 +41,8 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
       if (!fastboard || !scene) {
         return;
       }
+      // disable camera move
+      fastboard.manager.mainView.disableCameraTransform = true;
       const { room, displayer } = fastboard.manager;
       if (room.phase !== 'connected') {
         return;
