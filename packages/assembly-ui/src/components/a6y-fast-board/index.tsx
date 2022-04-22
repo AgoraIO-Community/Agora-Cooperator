@@ -58,6 +58,14 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
       console.log('change scene to:', displayer.state.sceneState.scenePath);
     }, [fastboard, scene]);
 
+    useEffect(() => {
+      if (!fastboard || fastboard.manager.room.phase !== 'connected') {
+        return;
+      }
+      // disable camera move
+      fastboard.manager.mainView.disableCameraTransform = true;
+    }, [fastboard, style, scene, aspectRatio, profile]);
+
     return (
       <div style={style} className="a6y-fastboard-wrap">
         <Fastboard
