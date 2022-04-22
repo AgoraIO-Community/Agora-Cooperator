@@ -16,7 +16,7 @@ import {
 import cls from 'classnames';
 import { BiPencil, BiExitFullscreen, BiFullscreen } from 'react-icons/bi';
 import { RDCRoleType } from 'agora-rdc-electron';
-import { useToggle } from 'react-use';
+import { useToggle, useWindowSize, useFullscreen } from 'react-use';
 import {
   useProfile,
   useEngines,
@@ -38,25 +38,36 @@ export interface A6yScreenShareProps {
   hasMarkable?: boolean;
 }
 export const A6yScreenShare: FC<A6yScreenShareProps> = memo(
-  ({ profileInSession, hasMarkable }) => {
-    const [[height, width], setSize] = useState([0, 0]);
-    const [[fbHeight, fbWidth], setFbSize] = useState([0, 0]);
+  ({
+    profileInSession: {
+      id,
+      signals,
+      streams,
+      screenShare,
+      markable,
+      screenVisibility,
+      rdcStatus,
+      aspectRatio,
+    },
+    hasMarkable,
+  }) => {
     const attachElRef = useRef<HTMLDivElement>(null);
-    const screenShareElRef = useRef<HTMLDivElement>(null);
+    const rootElRef = useRef<HTMLDivElement>(null);
+    const [isFull, toggleFullscreen] = useToggle(false);
+    const isFullscreen = useFullscreen(rootElRef, isFull, {
+      onClose: () => toggleFullscreen(false),
+    });
+    const { height, width } = useWindowSize();
+    const [[fbHeight, fbWidth], setFbSize] = useState([0, 0]);
     const intl = useIntl();
     const { rtcEngine, rdcEngine, publishedStreams, authorizedControlUids } =
       useEngines();
     const session = useSession();
     const { profile } = useProfile();
     const [isSubscribed, setIsSubscribed] = useState(false);
-    const [isFullscreen, toggleFullscreen] = useToggle(false);
-    const isSelf = profileInSession.id === profile?.id;
-    const rdcSignal = profileInSession.signals.find(
-      (s) => s.kind === SignalKind.RDC,
-    );
-    const screenStream = profileInSession?.streams.find(
-      (s) => s.kind === StreamKind.SCREEN,
-    );
+    const isSelf = id === profile?.id;
+    const rdcSignal = signals.find((s) => s.kind === SignalKind.RDC);
+    const screenStream = streams.find((s) => s.kind === StreamKind.SCREEN);
 
     const SCREEN_VISIBILITY_MAP: { [key in ScreenVisibility]: string } = {
       [ScreenVisibility.ONLY_HOST]: intl.formatMessage({
@@ -67,37 +78,67 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = memo(
       }),
     };
 
-    const updateSize = useCallback(() => {
-      const height =
-        window.innerHeight - (WORK_AREA_HEIGHT_MAPS[process.platform] ?? 138);
-      const width = window.innerWidth - 232;
-      console.log('updateSize', height, width);
-      setSize([height, width]);
-    }, [setSize]);
-
     const toggleMarkable = async () => {
-      if (!session || !profileInSession) {
+      if (!session) {
         return;
       }
-      await updateProfile(session.id, profileInSession.id, {
-        markable: !profileInSession.markable,
+      await updateProfile(session.id, id, {
+        markable: !markable,
       });
     };
 
-    const handleVisibilityChange =
-      (visibility: ScreenVisibility) => async () => {
-        if (!session || !profileInSession) {
+    const handleVisibilityChange = async (visibility: ScreenVisibility) => {
+      if (!session) {
+        return;
+      }
+      await updateProfile(session.id, id, {
+        screenVisibility: visibility,
+      });
+    };
+
+    const updateFBSize = useCallback(
+      (target: HTMLCanvasElement) => {
+        const { width: cWidth, height: cHeight, style } = target;
+        // @ts-ignore TS2339: Property 'zoom' does not exist on type 'CSSStyleDeclaration'.
+        const zoom = Number(style.zoom);
+        console.log('resize w', [cHeight * zoom, cWidth * zoom]);
+        setFbSize([cHeight * zoom, cWidth * zoom]);
+      },
+      [setFbSize],
+    );
+
+    const resizeObserverRef = useRef<ResizeObserver>(
+      new ResizeObserver((entries, _observer) => {
+        const entry = entries.find(
+          (entry) => entry.target instanceof HTMLCanvasElement,
+        );
+        if (!entry) {
           return;
         }
-        await updateProfile(session.id, profileInSession.id, {
-          screenVisibility: visibility,
+        updateFBSize(entry.target as HTMLCanvasElement);
+      }),
+    );
+
+    const mutationObserverRef = useRef<MutationObserver>(
+      new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          const targetEl = mutation.target as HTMLDivElement;
+          const renderingEl = targetEl.querySelector('canvas');
+          if (mutation.addedNodes.length > 0 && renderingEl) {
+            resizeObserverRef.current.observe(renderingEl);
+            updateFBSize(renderingEl);
+          }
+          if (mutation.removedNodes.length > 0 && renderingEl) {
+            resizeObserverRef.current.unobserve(renderingEl);
+            updateFBSize(renderingEl);
+          }
         });
-      };
+      }),
+    );
 
     useEffect(() => {
       const attachEl = attachElRef.current;
       if (
-        !profileInSession ||
         !screenStream ||
         !rtcEngine ||
         !rdcEngine ||
@@ -109,7 +150,7 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = memo(
         return;
       }
       if (
-        profileInSession.rdcStatus === RDCStatus.ACTIVE &&
+        rdcStatus === RDCStatus.ACTIVE &&
         screenStream.video &&
         publishedStreams.includes(screenStream.uid) &&
         rdcEngine.getRole() === RDCRoleType.CONTROLLED
@@ -119,7 +160,7 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = memo(
       }
 
       if (
-        profileInSession.rdcStatus === RDCStatus.ACTIVE &&
+        rdcStatus === RDCStatus.ACTIVE &&
         screenStream.video &&
         publishedStreams.includes(screenStream.uid) &&
         authorizedControlUids.includes(rdcSignal.uid) &&
@@ -130,7 +171,7 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = memo(
       }
 
       if (
-        profileInSession.screenShare &&
+        screenShare &&
         screenStream.video &&
         publishedStreams.includes(screenStream.uid)
       ) {
@@ -146,7 +187,8 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = memo(
       };
     }, [
       rtcEngine,
-      profileInSession,
+      rdcStatus,
+      screenShare,
       authorizedControlUids,
       screenStream,
       rdcEngine,
@@ -158,155 +200,100 @@ export const A6yScreenShare: FC<A6yScreenShareProps> = memo(
     ]);
 
     useEffect(() => {
-      updateSize();
-      window.addEventListener('resize', updateSize);
-      return () => {
-        window.removeEventListener('resize', updateSize);
-      };
-    }, [updateSize]);
-
-    useEffect(() => {
       const attachEl = attachElRef.current;
       if (!attachEl) {
         return;
       }
-      let resizeObserver: ResizeObserver;
-      const handElResize: ResizeObserverCallback = (entries, _observer) => {
-        const entry = entries.find(
-          (entry) => entry.target instanceof HTMLCanvasElement,
-        );
-        if (!entry) {
-          return;
-        }
-        const target = entry.target as HTMLCanvasElement;
-        const { width: cWidth, height: cHeight, style } = target;
-        // @ts-ignore TS2339: Property 'zoom' does not exist on type 'CSSStyleDeclaration'.
-        const zoom = Number(style.zoom);
-        console.log('resize w', [cHeight * zoom, cWidth * zoom]);
-        setFbSize([cHeight * zoom, cWidth * zoom]);
-      };
-      const mutationObserver = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          const targetEl = mutation.target as HTMLDivElement;
-          const renderingEl = targetEl.querySelector('canvas');
-          if (mutation.addedNodes.length > 0 && renderingEl) {
-            if (resizeObserver) {
-              resizeObserver.disconnect();
-            }
-            resizeObserver = new ResizeObserver(handElResize);
-            resizeObserver.observe(renderingEl);
-            const { width: cWidth, height: cHeight, style } = renderingEl;
-            // @ts-ignore TS2339: Property 'zoom' does not exist on type 'CSSStyleDeclaration'.
-            const zoom = Number(style.zoom);
-            console.log('resize w', [cHeight * zoom, cWidth * zoom]);
-            setFbSize([cHeight * zoom, cWidth * zoom]);
-          }
-        });
-      });
-      mutationObserver.observe(attachEl, {
+      mutationObserverRef.current.observe(attachEl, {
+        subtree: true,
         childList: true,
-        attributeFilter: ['style'],
+        attributes: true,
       });
-      return () => {
-        mutationObserver.disconnect();
-      };
     }, [attachElRef]);
 
-    useEffect(() => {
-      const screenShareEl = screenShareElRef.current;
-      if (!screenShareEl) {
-        return;
-      }
-      if (isFullscreen) {
-        screenShareEl.requestFullscreen();
-      }
-      if (!isFullscreen && document.fullscreenElement) {
-        document.exitFullscreen();
-      }
-    }, [isFullscreen, screenShareElRef]);
+    const attachElH = isFullscreen
+      ? height
+      : height - (WORK_AREA_HEIGHT_MAPS[process.platform] ?? 138);
+    const attachElW = isFullscreen ? width : width - 232;
 
     return (
       <div
         style={{
-          height: isFullscreen ? '100%' : undefined,
-          width: isFullscreen ? '100%' : undefined,
+          height: isFullscreen ? '100%' : 'calc(100% - 16px)',
+          width: isFullscreen ? '100%' : 'calc(100% - 16px)',
         }}
-        className={cls({
-          'a6y-screen-share': 1,
-          playing: isSubscribed,
-        })}
-        ref={screenShareElRef}>
+        className={cls({ 'a6y-screen-share': 1, playing: isSubscribed })}
+        ref={rootElRef}>
         <div
-          className="a6y-screen-share-container"
-          ref={attachElRef}
           style={{
-            height: height === 0 || isFullscreen ? '100%' : `${height}px`,
-            width: width === 0 || isFullscreen ? '100%' : `${width}px`,
-          }}></div>
-        {profile &&
-        profileInSession.screenShare &&
-        profileInSession.markable ? (
+            height: `${attachElH}px`,
+            width: `${attachElW}px`,
+          }}
+          className="a6y-screen-share-container"
+          ref={attachElRef}></div>
+        {profile && screenShare && markable ? (
           <div className="a6y-fastboard-container">
             <A6yFastBoard
               profile={profile}
-              scene={`screen-share-${profileInSession.id}`}
-              aspectRatio={profileInSession.aspectRatio}
+              scene={`screen-share-${id}`}
+              aspectRatio={aspectRatio}
               style={{ height: fbHeight, width: fbWidth }}
             />
           </div>
         ) : null}
-        {
-          <div
-            className={cls({
-              'a6y-screen-share-controls': 1,
-              'host-controls': profile?.role === RoleType.HOST,
-            })}>
-            {profileInSession.screenShare ? (
-              <button
-                className={cls({
-                  'a6y-markable': 1,
-                  [`enabled`]: profileInSession?.markable,
-                })}
-                onClick={toggleMarkable}
-                disabled={hasMarkable && !profileInSession.markable}>
-                <BiPencil size={16} />
-              </button>
-            ) : null}
-            <button className="a6y-fullscreen" onClick={toggleFullscreen}>
-              {isFullscreen ? (
-                <BiExitFullscreen size={16} />
-              ) : (
-                <BiFullscreen size={16} />
-              )}
+        <div
+          className={cls({
+            'a6y-screen-share-controls': 1,
+            'host-controls': profile?.role === RoleType.HOST,
+          })}>
+          {screenShare ? (
+            <button
+              className={cls({
+                'a6y-markable': 1,
+                [`enabled`]: markable,
+              })}
+              onClick={toggleMarkable}
+              disabled={hasMarkable && !markable}>
+              <BiPencil size={16} />
             </button>
-            {profile?.role === RoleType.HOST ? (
-              <Dropdown
-                overlay={
-                  <Menu>
-                    <Menu.Item
-                      onClick={handleVisibilityChange(
-                        ScreenVisibility.ONLY_HOST,
-                      )}>
-                      {SCREEN_VISIBILITY_MAP[ScreenVisibility.ONLY_HOST]}
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={handleVisibilityChange(ScreenVisibility.ALL)}>
-                      {SCREEN_VISIBILITY_MAP[ScreenVisibility.ALL]}
-                    </Menu.Item>
-                  </Menu>
-                }>
-                <button className="a6y-screen-visibility">
-                  {
-                    SCREEN_VISIBILITY_MAP[
-                      profileInSession.screenVisibility ??
-                        ScreenVisibility.ONLY_HOST
-                    ]
-                  }
-                </button>
-              </Dropdown>
-            ) : null}
-          </div>
-        }
+          ) : null}
+          <button className="a6y-fullscreen" onClick={toggleFullscreen}>
+            {isFullscreen ? (
+              <BiExitFullscreen size={16} />
+            ) : (
+              <BiFullscreen size={16} />
+            )}
+          </button>
+          {profile?.role === RoleType.HOST ? (
+            <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item
+                    key={`${ScreenVisibility.ONLY_HOST}`}
+                    onClick={() =>
+                      handleVisibilityChange(ScreenVisibility.ONLY_HOST)
+                    }>
+                    {SCREEN_VISIBILITY_MAP[ScreenVisibility.ONLY_HOST]}
+                  </Menu.Item>
+                  <Menu.Item
+                    key={`${ScreenVisibility.ALL}`}
+                    onClick={() =>
+                      handleVisibilityChange(ScreenVisibility.ALL)
+                    }>
+                    {SCREEN_VISIBILITY_MAP[ScreenVisibility.ALL]}
+                  </Menu.Item>
+                </Menu>
+              }>
+              <button className="a6y-screen-visibility">
+                {
+                  SCREEN_VISIBILITY_MAP[
+                    screenVisibility ?? ScreenVisibility.ONLY_HOST
+                  ]
+                }
+              </button>
+            </Dropdown>
+          ) : null}
+        </div>
       </div>
     );
   },
