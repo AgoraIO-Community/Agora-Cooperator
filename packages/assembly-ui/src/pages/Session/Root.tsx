@@ -250,7 +250,11 @@ export const Root = () => {
       const updateDeviceState = () =>
         updateProfile(session.id, profile.id, {
           screenShare: payload.screenShare,
-          screenVisibility: ScreenVisibility.ONLY_HOST,
+          screenVisibility:
+            payload.screenShare === false
+              ? ScreenVisibility.ONLY_HOST
+              : undefined,
+          markable: payload.screenShare === false ? false : undefined,
           streams: [
             {
               id: payload.streamId,
