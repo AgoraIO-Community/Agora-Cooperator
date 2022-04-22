@@ -39,6 +39,7 @@ const App = () => {
     const onRestore = () => setMaximized(false);
     currentWindow.on('maximize', onMaximized);
     currentWindow.on('unmaximize', onRestore);
+    currentWindow.on('resized', onRestore);
     return () => {
       currentWindow.removeListener('maximize', onMaximized);
       currentWindow.removeListener('unmaximize', onRestore);
