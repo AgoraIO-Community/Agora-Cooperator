@@ -41,12 +41,12 @@ export const A6yFastBoard: FC<A6yFastBoardProps> = memo(
       if (!fastboard || !scene) {
         return;
       }
-      // disable camera move
-      fastboard.manager.mainView.disableCameraTransform = true;
       const { room, displayer } = fastboard.manager;
       if (room.phase !== 'connected') {
         return;
       }
+      // disable camera move
+      fastboard.manager.mainView.disableCameraTransform = true;
       const allScenes = displayer.entireScenes();
       const rootScenes = allScenes['/'];
       const currentScenes = (rootScenes ?? []).find((s) => s.name === scene);
