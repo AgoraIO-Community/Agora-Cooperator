@@ -50,7 +50,8 @@ export class RtcEngine extends EventEmitter {
     this.instance.setClientRole(1);
     this.instance.enableVideo();
     this.instance.enableAudio();
-    this.instance.enableLocalAudio(false);
+    this.instance.enableLocalAudio(true);
+    this.instance.adjustRecordingSignalVolume(0);
     this.instance.enableLocalVideo(false);
     const code = this.instance.joinChannel(token, channel, '', uid);
     if (code !== 0) {
@@ -69,9 +70,9 @@ export class RtcEngine extends EventEmitter {
 
   publishOrUnpublish(audio?: boolean, video?: boolean) {
     if (audio) {
-      this.instance.enableLocalAudio(true);
+      this.instance.adjustRecordingSignalVolume(100);
     } else {
-      this.instance.enableLocalAudio(false);
+      this.instance.adjustRecordingSignalVolume(0);
     }
     if (video) {
       this.instance.enableLocalVideo(true);
