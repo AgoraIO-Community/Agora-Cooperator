@@ -3765,14 +3765,23 @@ packages:
       rimraf: 3.0.2
     dev: false
 
+<<<<<<< HEAD
   /agora-rdc-electron/1.1.0_57c1dc91d620f8f528728be6c91441c5:
     resolution: {integrity: sha512-SRcxrnvwhcA5ekkJUJXrNbWRTpnd6xpNpZHl9prXMJ3lMOTLiDU84xBLZym7qvOE7jzV+ukRcAxUh0QixTP7Kg==}
+=======
+  /agora-rdc-electron/1.0.0_57c1dc91d620f8f528728be6c91441c5:
+    resolution: {integrity: sha512-YSEGc9kTSTx6yhn1k79W0aQDSvCtbvA2PQ8mQff+I5RTxUWPsPsVwgvqdGWXqu/9SmYod4US4j/YAKPBCwYrKQ==}
+>>>>>>> chore: upgrade agora electron sdk to 3.7.0
     peerDependencies:
       agora-electron-sdk: '>= 3.7.0'
       electron: '>= 5.0.0'
     dependencies:
       agora-electron-sdk: 3.7.0-build.519
+<<<<<<< HEAD
       agora-rdc-core: 1.0.1_electron@12.0.0
+=======
+      agora-rdc-core: 1.0.0_electron@12.0.0
+>>>>>>> chore: upgrade agora electron sdk to 3.7.0
       electron: 12.0.0
     dev: false
 
