@@ -37,20 +37,21 @@ export const A6yScreenSelector: FC<A6yScreenSelectorProps> = ({
 
   useEffect(() => {
     if (rtcEngine && purpose === 'screenShare') {
-      const displays = rtcEngine
-        .getFSSDisplays()
-        .map((display) => ({
-          ...display,
-          thumbnail: URL.createObjectURL(new Blob([display.image])),
-        }))
-        .map(({ thumbnail, height, width, displayId }) => ({
-          thumbnail: thumbnail,
-          id: displayId,
-          height,
-          width,
-        }));
-      console.log('displays', displays);
-      setDisplays(displays);
+      rtcEngine.getFSSDisplays().then((displays) => {
+        const allDisplays = displays
+          .map((display) => ({
+            ...display,
+            thumbnail: URL.createObjectURL(new Blob([display.image])),
+          }))
+          .map(({ thumbnail, height, width, displayId }) => ({
+            thumbnail: thumbnail,
+            id: displayId,
+            height,
+            width,
+          }));
+        setDisplays(allDisplays);
+        console.log('displays', allDisplays);
+      });
       // const windows = rtcEngine.getFSSWindows();
       // setWindows(windows);
       // console.log('windows', windows);

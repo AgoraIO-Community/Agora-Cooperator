@@ -13,7 +13,7 @@
   "dependencies": {
     "@netless/fastboard-react": "0.3.2-canary.6",
     "@netless/window-manager": "^0.4.18",
-    "agora-electron-sdk": "3.6.1-rc.1-build.122",
+    "agora-electron-sdk": "3.7.0-build.519",
     "agora-rdc-electron": "^1.0.0",
     "agora-rtm-sdk": "^1.4.4",
     "antd": "^4.19.3",
