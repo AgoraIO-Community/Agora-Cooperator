@@ -48,6 +48,17 @@ export class RtcEngine extends EventEmitter {
   async joinChannel(token: string, channel: string, uid: number) {
     this.instance.setChannelProfile(0);
     this.instance.setClientRole(1);
+    this.instance.setVideoEncoderConfiguration({
+      width: 320,
+      height: 180,
+      minBitrate: 200,
+      bitrate: 200,
+      frameRate: 15,
+      minFrameRate: 10,
+      orientationMode: 0,
+      degradationPreference: 0,
+      mirrorMode: 0,
+    });
     this.instance.enableVideo();
     this.instance.enableAudio();
     this.instance.enableLocalAudio(true);
