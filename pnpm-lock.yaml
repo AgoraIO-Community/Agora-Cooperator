@@ -110,7 +110,7 @@ importers:
       '@types/react': ^17.0.20
       '@types/react-dom': ^17.0.9
       agora-electron-sdk: 3.7.0-build.519
-      agora-rdc-electron: ^1.0.0
+      agora-rdc-electron: ^1.1.0
       agora-rtm-sdk: ^1.4.4
       antd: ^4.19.3
       assembly-shared: workspace:^0.0.1-alpha.24
@@ -145,7 +145,7 @@ importers:
       '@netless/fastboard-react': 0.3.2-canary.6_91d0e63e2c712b1ce972f2d3abea5cce
       '@netless/window-manager': 0.4.20_white-web-sdk@2.16.15
       agora-electron-sdk: 3.7.0-build.519
-      agora-rdc-electron: 1.0.0_57c1dc91d620f8f528728be6c91441c5
+      agora-rdc-electron: 1.1.0_57c1dc91d620f8f528728be6c91441c5
       agora-rtm-sdk: 1.4.4
       antd: 4.19.5_react-dom@17.0.2+react@17.0.2
       assembly-shared: link:../assembly-shared
@@ -3749,8 +3749,8 @@ packages:
       yuv-canvas: 1.2.11
     dev: false
 
-  /agora-rdc-core/1.0.0_electron@12.0.0:
-    resolution: {integrity: sha512-f7ZFrYZlHLrhrPNRBA/CwoxFKZjNWbun+bgGkeQJI/kwBrjnFtYGLFXnjV3OcmNFz4TtVRi5DihYlu0d2D4CVg==}
+  /agora-rdc-core/1.0.1_electron@12.0.0:
+    resolution: {integrity: sha512-Y3T5p9WrZ5xcT7RAD/R5g/sPiUQs+eggXyVlQjG8PKWXJDwRHMAYV+vDYMuQe4LLbqn7DP6v/AHttc8cPCHatA==}
     requiresBuild: true
     peerDependencies:
       electron: '>= 5.0.0'
@@ -3765,14 +3765,14 @@ packages:
       rimraf: 3.0.2
     dev: false
 
-  /agora-rdc-electron/1.0.0_57c1dc91d620f8f528728be6c91441c5:
-    resolution: {integrity: sha512-YSEGc9kTSTx6yhn1k79W0aQDSvCtbvA2PQ8mQff+I5RTxUWPsPsVwgvqdGWXqu/9SmYod4US4j/YAKPBCwYrKQ==}
+  /agora-rdc-electron/1.1.0_57c1dc91d620f8f528728be6c91441c5:
+    resolution: {integrity: sha512-SRcxrnvwhcA5ekkJUJXrNbWRTpnd6xpNpZHl9prXMJ3lMOTLiDU84xBLZym7qvOE7jzV+ukRcAxUh0QixTP7Kg==}
     peerDependencies:
-      agora-electron-sdk: '>= 2.8.0'
+      agora-electron-sdk: '>= 3.7.0'
       electron: '>= 5.0.0'
     dependencies:
       agora-electron-sdk: 3.7.0-build.519
-      agora-rdc-core: 1.0.0_electron@12.0.0
+      agora-rdc-core: 1.0.1_electron@12.0.0
       electron: 12.0.0
     dev: false
 
@@ -7340,7 +7340,7 @@ packages:
     dev: true
 
   /fs-write-stream-atomic/1.0.10:
-    resolution: {integrity: sha1-tH31NJPvkR33VzHnCp3tAYnbQMk=}
+    resolution: {integrity: sha512-gehEzmPn2nAwr39eay+x3X34Ra+M2QlVUTLhkXPjWdeO8RF9kszk116avgBJM3ZyNHgHXBNx+VmPaFC36k0PzA==}
     dependencies:
       graceful-fs: 4.2.10
       iferr: 0.1.5
@@ -7979,7 +7979,7 @@ packages:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
 
   /iferr/0.1.5:
-    resolution: {integrity: sha1-xg7taebY/bazEEofy8ocGS3FtQE=}
+    resolution: {integrity: sha512-DUNFN5j7Tln0D+TxzloUjKB+CtVu6myn0JEFak6dG18mNt9YkQ6lzGCdafwofISZ1lLF3xRHJ98VKy9ynkcFaA==}
     dev: false
 
   /ignore/5.2.0:
@@ -9455,7 +9455,7 @@ packages:
     dev: true
 
   /lodash.throttle/4.1.1:
-    resolution: {integrity: sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=}
+    resolution: {integrity: sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==}
     dev: false
 
   /lodash.uniq/4.5.0:
