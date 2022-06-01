@@ -1,6 +1,7 @@
 import AgoraRtcEngine from 'agora-electron-sdk';
 import { isWindows, isMacOS } from '../utils';
 import EventEmitter from 'eventemitter3';
+import { DisplayInfo, WindowInfo } from 'agora-electron-sdk/types/Api/native_type';
 
 const LOGS_FOLDER = isMacOS()
   ? `${window.process.env.HOME}/Library/Logs/RDCClient`
@@ -49,7 +50,8 @@ export class RtcEngine extends EventEmitter {
     this.instance.setClientRole(1);
     this.instance.enableVideo();
     this.instance.enableAudio();
-    this.instance.enableLocalAudio(false);
+    this.instance.enableLocalAudio(true);
+    this.instance.adjustRecordingSignalVolume(0);
     this.instance.enableLocalVideo(false);
     const code = this.instance.joinChannel(token, channel, '', uid);
     if (code !== 0) {
@@ -68,9 +70,9 @@ export class RtcEngine extends EventEmitter {
 
   publishOrUnpublish(audio?: boolean, video?: boolean) {
     if (audio) {
-      this.instance.enableLocalAudio(true);
+      this.instance.adjustRecordingSignalVolume(100);
     } else {
-      this.instance.enableLocalAudio(false);
+      this.instance.adjustRecordingSignalVolume(0);
     }
     if (video) {
       this.instance.enableLocalVideo(true);
@@ -174,12 +176,20 @@ export class RtcEngine extends EventEmitter {
     });
   }
 
-  public getFSSDisplays() {
-    return this.instance.getScreenDisplaysInfo();
+  public getFSSDisplays(): Promise<DisplayInfo[]> {
+    return new Promise((resolve) => {
+      this.instance.getScreenDisplaysInfo((displays) => {
+        resolve(displays);
+      });
+    });
   }
 
-  public getFSSWindows() {
-    return this.instance.getScreenWindowsInfo();
+  public getFSSWindows(): Promise<WindowInfo[]> {
+    return new Promise((resolve) => {
+      this.instance.getScreenWindowsInfo((windows) => {
+        resolve(windows);
+      });
+    });
   }
 
   public async publishFSS(
@@ -196,7 +206,7 @@ export class RtcEngine extends EventEmitter {
       console.warn('Loopback is not supported on macOS');
     }
     if (isDisplay) {
-      const excludeWindowList = (this.getFSSWindows() as any[])
+      const excludeWindowList = (await this.getFSSWindows() as any[])
         .filter(
           (w) =>
             w.ownerName === 'Electron' ||
@@ -212,7 +222,7 @@ export class RtcEngine extends EventEmitter {
         ...config,
       };
       console.log('publish screen share -> captureParams', captureParams);
-      code = this.instance.videoSourceStartScreenCaptureByScreen(
+      code = this.instance.videoSourceStartScreenCaptureByDisplayId(
         symbol,
         DEFAULT_RECT,
         captureParams,
