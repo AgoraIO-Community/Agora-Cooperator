@@ -131,6 +131,8 @@ export class RtcEngine extends EventEmitter {
 
   public async initializeFSSRtcEngine(appId: string) {
     const code = this.instance.videoSourceInitialize(appId);
+    this.instance.videoSourceSetParameters(JSON.stringify({'che.video.mutigpu_exclude_window': true}));
+    this.instance.setScreenCaptureScenario(4);
     if (code !== 0) {
       throw new Error(
         `Failed to initialize rtc engine for screen share with error code: ${code}`,
