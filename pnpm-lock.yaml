@@ -29,7 +29,7 @@ importers:
       '@typescript-eslint/eslint-plugin': ^5.0.0
       '@typescript-eslint/parser': ^5.0.0
       agora-access-token: ^2.0.4
-      assembly-shared: workspace:^0.0.1-alpha.25
+      assembly-shared: workspace:^0.0.1-alpha.26
       axios: ^0.26.1
       dayjs: ^1.11.0
       eslint: ^8.0.1
@@ -113,7 +113,7 @@ importers:
       agora-rdc-electron: ^1.1.0
       agora-rtm-sdk: ^1.4.4
       antd: ^4.19.3
-      assembly-shared: workspace:^0.0.1-alpha.25
+      assembly-shared: workspace:^0.0.1-alpha.26
       axios: ^0.26.1
       classnames: ^2.3.1
       concurrently: ^7.0.0
