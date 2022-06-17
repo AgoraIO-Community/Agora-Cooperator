@@ -165,7 +165,7 @@ export const EnginesProvider: FC = ({ children }) => {
       );
     }
 
-    rtcEngine.instance.setScreenCaptureScenario(4);
+    rtcEngine.instance.videoSourceSetScreenCaptureScenario(4);
 
     instance
       .join(userId, token, session.channel, streamId, streamToken)
