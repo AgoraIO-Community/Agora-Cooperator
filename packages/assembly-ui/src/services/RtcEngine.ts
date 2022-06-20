@@ -1,7 +1,10 @@
 import AgoraRtcEngine from 'agora-electron-sdk';
 import { isWindows, isMacOS } from '../utils';
 import EventEmitter from 'eventemitter3';
-import { DisplayInfo, WindowInfo } from 'agora-electron-sdk/types/Api/native_type';
+import {
+  DisplayInfo,
+  WindowInfo,
+} from 'agora-electron-sdk/types/Api/native_type';
 
 const LOGS_FOLDER = isMacOS()
   ? `${window.process.env.HOME}/Library/Logs/RDCClient`
@@ -81,9 +84,9 @@ export class RtcEngine extends EventEmitter {
 
   publishOrUnpublish(audio?: boolean, video?: boolean) {
     if (audio) {
-      this.instance.adjustRecordingSignalVolume(100);
+      this.instance.enableLocalAudio(true);
     } else {
-      this.instance.adjustRecordingSignalVolume(0);
+      this.instance.enableLocalVideo(true);
     }
     if (video) {
       this.instance.enableLocalVideo(true);
@@ -131,8 +134,11 @@ export class RtcEngine extends EventEmitter {
 
   public async initializeFSSRtcEngine(appId: string) {
     const code = this.instance.videoSourceInitialize(appId);
-    this.instance.videoSourceSetParameters(JSON.stringify({'che.video.mutigpu_exclude_window': true}));
-    this.instance.setScreenCaptureScenario(4);
+    this.instance.videoSourceSetParameters(
+      JSON.stringify({ 'che.video.mutigpu_exclude_window': true }),
+    );
+    this.instance.videoSourceSetScreenCaptureScenario(4);
+    this.instance.videoSourceEnableAudio();
     if (code !== 0) {
       throw new Error(
         `Failed to initialize rtc engine for screen share with error code: ${code}`,
@@ -166,7 +172,12 @@ export class RtcEngine extends EventEmitter {
           ),
         );
       });
-      code = this.instance.videoSourceJoin(token, channel, '', uid);
+      code = this.instance.videoSourceJoin(token, channel, '', uid, {
+        publishLocalAudio: true,
+        publishLocalVideo: true,
+        autoSubscribeAudio: false,
+        autoSubscribeVideo: false,
+      });
     });
   }
 
@@ -213,13 +224,14 @@ export class RtcEngine extends EventEmitter {
   ) {
     let code = 0;
     if (isWindows() && withAudio) {
-      this.instance.enableLoopbackRecording(true);
+      this.instance.videoSourceAdjustRecordingSignalVolume(0);
+      this.instance.videoSourceEnableLoopbackRecording(true);
     }
     if (isMacOS() && withAudio) {
       console.warn('Loopback is not supported on macOS');
     }
     if (isDisplay) {
-      const excludeWindowList = (await this.getFSSWindows() as any[])
+      const excludeWindowList = ((await this.getFSSWindows()) as any[])
         .filter(
           (w) =>
             w.ownerName === 'Electron' ||
@@ -262,7 +274,7 @@ export class RtcEngine extends EventEmitter {
   }
 
   public async unpublishFSS(isDisplay: boolean = true) {
-    this.instance.enableLoopbackRecording(false);
+    this.instance.videoSourceEnableLoopbackRecording(false);
     let code = this.instance.stopScreenCapture2();
     if (code !== 0) {
       throw new Error(

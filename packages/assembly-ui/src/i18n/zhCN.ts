@@ -28,8 +28,7 @@ const messages = {
   'a6y.stream.screenShare.on': '开启屏幕共享',
   'a6y.stream.screenShare.on.request': '邀请屏幕共享',
   'a6y.screen.selector.screenShare.title': '请选择你想要共享的屏幕或窗口',
-  'a6y.screen.selector.withAudio':
-    '同时共享声音, 勾选此项请您的麦克风将会被打开。',
+  'a6y.screen.selector.withAudio': '同时共享声音。',
   'a6y.screen.selector.resolution': '分辨率',
   'a6y.screen.selector.rdc.title': '请选择你想要授权的屏幕',
   'a6y.screen.selector.screenShare.ok': '确认共享',
