@@ -150,21 +150,13 @@ export const Root = () => {
         bitrate: BITRATES[`${width}x${height}`],
         frameRate: 15,
       });
-      const streams = [{ id: screenStream.id, video: true, audio: withAudio }];
-      if (withAudio && !cameraStream.audio) {
-        streams.push({
-          id: cameraStream.id,
-          video: cameraStream.video,
-          audio: true,
-        });
-      }
       await updateProfile(session.id, profile.id, {
         screenShare: !profile.screenShare,
         screenVisibility:
           profile.role === RoleType.HOST
             ? ScreenVisibility.ALL
             : ScreenVisibility.ONLY_HOST,
-        streams,
+        streams: [{ id: screenStream.id, video: true, audio: withAudio }],
       });
       setScreenSelectorVisible(false);
       return;
