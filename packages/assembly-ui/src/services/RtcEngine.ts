@@ -62,6 +62,7 @@ export class RtcEngine extends EventEmitter {
       degradationPreference: 0,
       mirrorMode: 0,
     });
+    this.instance.setAudioProfile(4, 3);
     this.instance.enableVideo();
     this.instance.enableAudio();
     this.instance.enableLocalAudio(true);
@@ -84,9 +85,9 @@ export class RtcEngine extends EventEmitter {
 
   publishOrUnpublish(audio?: boolean, video?: boolean) {
     if (audio) {
-      this.instance.enableLocalAudio(true);
+      this.instance.adjustRecordingSignalVolume(100);
     } else {
-      this.instance.enableLocalVideo(true);
+      this.instance.adjustRecordingSignalVolume(0);
     }
     if (video) {
       this.instance.enableLocalVideo(true);
@@ -134,11 +135,11 @@ export class RtcEngine extends EventEmitter {
 
   public async initializeFSSRtcEngine(appId: string) {
     const code = this.instance.videoSourceInitialize(appId);
+    this.instance.videoSourceSetLogFile(`${LOGS_FOLDER}/video_source.log`);
     this.instance.videoSourceSetParameters(
       JSON.stringify({ 'che.video.mutigpu_exclude_window': true }),
     );
     this.instance.videoSourceSetScreenCaptureScenario(4);
-    this.instance.videoSourceEnableAudio();
     if (code !== 0) {
       throw new Error(
         `Failed to initialize rtc engine for screen share with error code: ${code}`,
@@ -173,7 +174,7 @@ export class RtcEngine extends EventEmitter {
         );
       });
       code = this.instance.videoSourceJoin(token, channel, '', uid, {
-        publishLocalAudio: true,
+        publishLocalAudio: false,
         publishLocalVideo: true,
         autoSubscribeAudio: false,
         autoSubscribeVideo: false,
@@ -224,8 +225,7 @@ export class RtcEngine extends EventEmitter {
   ) {
     let code = 0;
     if (isWindows() && withAudio) {
-      this.instance.videoSourceAdjustRecordingSignalVolume(0);
-      this.instance.videoSourceEnableLoopbackRecording(true);
+      this.instance.enableLoopbackRecording(true);
     }
     if (isMacOS() && withAudio) {
       console.warn('Loopback is not supported on macOS');
@@ -274,7 +274,7 @@ export class RtcEngine extends EventEmitter {
   }
 
   public async unpublishFSS(isDisplay: boolean = true) {
-    this.instance.videoSourceEnableLoopbackRecording(false);
+    this.instance.enableLoopbackRecording(false);
     let code = this.instance.stopScreenCapture2();
     if (code !== 0) {
       throw new Error(
