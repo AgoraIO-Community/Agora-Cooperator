@@ -61,13 +61,13 @@ ingress:
 
 resources:
   limits:
-    cpu: 1000m
-    memory: 512Mi
-    ephemeral-storage: 180Mi
+    cpu: 100m
+    memory: 128Mi
+    ephemeral-storage: 200Mi
   requests:
-    cpu: 1000m
-    memory: 512Mi
-    ephemeral-storage: 180Mi
+    cpu: 100m
+    memory: 128Mi
+    ephemeral-storage: 200Mi
 
 autoscaling:
   enabled: false
